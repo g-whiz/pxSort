@@ -5,8 +5,10 @@ import android.util.Log;
 
 import com.android.internal.util.Predicate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 
 /**A class for applying the class of pixel sorting algorithm invented by Kim Asendorf.
@@ -17,40 +19,41 @@ import java.util.Comparator;
  * and the index of the last pixel in P satisfying some other Predicate is found.
  *
  * Then, the pixels between the first and last indices found in P (including the pixels at the given
- * indices) are sorted according to the order determined by some Comparator.
+ * indices) are sorted according toPredicate the order determined by some Comparator.
  *
  * Created by George on 2015-05-22.
  */
-public class AsendorfSort implements Sort{
+public class AsendorfSort extends Sort{
 
     public static final String TAG = AsendorfSort.class.getSimpleName();
 
     public static final int SORT_BY_ROW = 0;
     public static final int SORT_BY_COLUMN = 1;
 
-    private static final int PIXELS_PER_THREAD = 1000000;
-
     private Comparator<Pixel> comparator;
 
-    private Predicate<Pixel> from;
-    private Predicate<Pixel> to;
+    private Predicate<Pixel> fromPredicate;
+    private Predicate<Pixel> toPredicate;
 
     private int direction;
+
+    private List<Callback> callbacks;
 
     /**Sole, parametrized constructor. Takes a Comparator, two Predicates, and either SORT_BY_ROW
      * or SORT_BY_COLUMN. See the description of this class for an overview of the function of each
      * component.
      *
      * @param comparator
-     * @param from
-     * @param to
+     * @param fromPredicate
+     * @param toPredicate
      * @param direction
      */
-    public AsendorfSort (Comparator<Pixel> comparator, Predicate<Pixel> from, Predicate<Pixel> to,
-                         int direction) {
+    public AsendorfSort (Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
+                         Predicate<Pixel> toPredicate, int direction) {
         this.comparator = comparator;
-        this.from = from;
-        this.to = to;
+        this.fromPredicate = fromPredicate;
+        this.toPredicate = toPredicate;
+        this.callbacks = new ArrayList<>();
 
         if (direction == SORT_BY_COLUMN || direction == SORT_BY_ROW) {
             this.direction = direction;
@@ -60,85 +63,20 @@ public class AsendorfSort implements Sort{
         }
     }
 
-    public void apply(final Bitmap img){
-
-        int pixelArraysPerThread = getNumPixelArrays(img) / getNumThreads(img);
-
-        for (int i = 1; i <= getNumThreads(img); i++) {
-
-            final int firstIndex = (i - 1) * pixelArraysPerThread;
-            final int lastIndex;
-
-            if (i == getNumThreads(img)) {
-                lastIndex = getNumPixelArrays(img) - 1;
-            } else {
-                lastIndex = i * pixelArraysPerThread - 1;
-            }
-
-            new Thread() {
-
-                @Override
-                public void run() {
-                    for (int index = firstIndex; index <= lastIndex; index ++) {
-
-                        Pixel[] pixels = null;
-
-                        switch (direction) {
-                            case SORT_BY_COLUMN:
-                                setColumn(img, sort(getColumn(img, index)), index);
-                                break;
-
-                            case SORT_BY_ROW:
-                                setRow(img, sort(getRow(img, index)), index);
-                                break;
-                        }
-
-                    }
-                }
-
-            }.start();
-
-        }
-
-    }
-
-    private int getNumPixelArrays(Bitmap img) {
-
-        switch (direction) {
-            case SORT_BY_COLUMN:
-                return img.getWidth();
-
-            case SORT_BY_ROW:
-                return img.getHeight();
-
-            default:
-                return 0;
-        }
-    }
-
-    private int getNumThreads(Bitmap img) {
-        return (img.getWidth() * img.getHeight()) / PIXELS_PER_THREAD + 1;
-    }
-
     public Pixel[] sort(Pixel[] pixels){
-        int startIndex = getStartIndex(pixels, from);
-        int endIndex = getEndIndex(pixels, to);
+        int fromIndex = getFromIndex(pixels);
+        int toIndex = getToIndex(pixels);
 
-        Pixel[] pixelsToSort = Arrays.copyOfRange(pixels, startIndex, endIndex);
-        Arrays.sort(pixelsToSort, comparator);
-
-        for (int i = startIndex; i <= startIndex; i++) {
-            pixels[i] = pixelsToSort[i - startIndex];
-        }
+        Arrays.sort(pixels, fromIndex, toIndex, comparator);
 
         return pixels;
     }
 
-    private int getStartIndex(Pixel[] pixels, Predicate<Pixel> from) {
+    private int getFromIndex(Pixel[] pixels) {
         int startIndex = 0;
 
         for (int i = 0; i < pixels.length; i++) {
-            if (from.apply(pixels[i])) {
+            if (fromPredicate.apply(pixels[i])) {
                 startIndex = i;
                 break;
             }
@@ -147,11 +85,11 @@ public class AsendorfSort implements Sort{
         return startIndex;
     }
 
-    private int getEndIndex(Pixel[] pixels, Predicate<Pixel> to) {
+    private int getToIndex(Pixel[] pixels) {
         int endIndex = pixels.length - 1;
 
         for (int i = pixels.length - 1; i >= 0; i--) {
-            if (to.apply(pixels[i])) {
+            if (toPredicate.apply(pixels[i])) {
                 endIndex = i;
                 break;
             }
@@ -160,37 +98,50 @@ public class AsendorfSort implements Sort{
         return endIndex;
     }
 
-    private Pixel[] getRow(Bitmap img, int row){
-        Pixel[] pixels = new Pixel[img.getWidth()];
-        for(int x = 0; x < img.getWidth(); x++) {
-            pixels[x] = new Pixel(img.getPixel(x, row));
-        }
+    @Override
+    public void apply(final Bitmap img) {
 
-        return pixels;
-    }
+        Thread t = new Thread(){
 
-    private void setRow(Bitmap img, Pixel[] pixels, int row) {
-        if (pixels.length == img.getWidth()) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                img.setPixel(x, row, pixels[x].getColor());
+            @Override
+            public void run() {
+
+                switch (direction) {
+                    case SORT_BY_ROW:
+                        Log.d(TAG, "Sorting...");
+                        for (int row = 0; row < img.getHeight(); row++) {
+                            Pixel[] pixels = getRow(img, row);
+                            sort(pixels);
+                            setRow(img, pixels, row);
+                        }
+                        Log.d(TAG, "Sorted.");
+                        break;
+
+                    case SORT_BY_COLUMN:
+                        Log.d(TAG, "Sorting...");
+                        for (int col = 0; col < img.getWidth(); col++) {
+                            Pixel[] pixels = getColumn(img, col);
+                            sort(pixels);
+                            setColumn(img, pixels, col);
+                        }
+                        Log.d(TAG, "Sorted.");
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Invalid direction.");
+                }
+
+                for (Callback callback : callbacks){
+                    callback.sortComplete();
+                }
             }
-        }
+        };
+
+        t.start();
     }
 
-    private Pixel[] getColumn(Bitmap img, int column){
-        Pixel[] pixels = new Pixel[img.getHeight()];
-        for(int y = 0; y < img.getHeight(); y++) {
-            pixels[y] = new Pixel(img.getPixel(column, y));
-        }
-
-        return pixels;
-    }
-
-    private void setColumn(Bitmap img, Pixel[] pixels, int column){
-        if (pixels.length == img.getHeight()) {
-            for (int y = 0; y < img.getHeight(); y++) {
-                img.setPixel(column, y, pixels[y].getColor());
-            }
-        }
+    @Override
+    public void addCallback(Callback callback) {
+        callbacks.add(callback);
     }
 }

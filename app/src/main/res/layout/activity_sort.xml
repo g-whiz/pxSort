@@ -4,12 +4,12 @@
     tools:context="com.github.pxsrt.SortActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
+         is needed toPredicate present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
-        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
-        android:text="@string/dummy_content" />
+    <com.github.pxsrt.SortView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sort_view" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -22,9 +22,10 @@
             android:background="@color/black_overlay" android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <Button android:id="@+id/dummy_button" style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:text="@string/dummy_button" />
+            <ImageButton
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_play_arrow_black_24dp"/>
 
         </LinearLayout>
     </FrameLayout>
