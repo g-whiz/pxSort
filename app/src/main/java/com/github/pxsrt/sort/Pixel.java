@@ -1,4 +1,4 @@
-package com.github.pxsrt;
+package com.github.pxsrt.sort;
 
 import android.graphics.Color;
 
