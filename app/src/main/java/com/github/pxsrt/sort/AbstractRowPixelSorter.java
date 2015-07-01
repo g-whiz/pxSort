@@ -11,19 +11,35 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
+/**TODO Documentation everywhere.
+ * An abstract framework for a PixelSort that applies a pixel sorting algorithm to a Bitmap
+ * row-by-row (or column-by-column).
+ *
+ *
  * Created by George on 2015-06-08.
  */
-public abstract class AbstractRowPixelSort extends PixelSort {
+public abstract class AbstractRowPixelSorter extends PixelSorter {
 
-    public static final String TAG = AbstractRowPixelSort.class.getSimpleName();
+    /**This class' tag.*/
+    public static final String TAG = AbstractRowPixelSorter.class.getSimpleName();
 
+    /**Sort images row-by-row. */
     public static final int SORT_BY_ROW = 0;
+
+    /**Sort images column-by-column.*/
     public static final int SORT_BY_COLUMN = 1;
 
+    /**The comparator determining pixel ordering in this PixelSort.*/
     protected Comparator<Pixel> comparator;
 
+    /**The predicate determining the index in each row/column to apply this PixelSort's
+     * pixel sorting algorithm from.
+     */
     protected Predicate<Pixel> fromPredicate;
+
+    /**The predicate determining the index in each row/column to apply this PixelSort's
+     * pixel sorting algorithm from.
+     */
     protected Predicate<Pixel> toPredicate;
 
     private Executor executor;
@@ -43,9 +59,8 @@ public abstract class AbstractRowPixelSort extends PixelSort {
      * @param toPredicate Predicate determining the last pixel of each row to sort to.
      * @param direction Either SORT_BY_ROW or SORT_BY_COLUMN.
      */
-    protected AbstractRowPixelSort(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
-                                   Predicate<Pixel> toPredicate, int direction) {
-        super();
+    protected AbstractRowPixelSorter(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
+                                     Predicate<Pixel> toPredicate, int direction) {
         this.comparator = comparator;
         this.fromPredicate = fromPredicate;
         this.toPredicate = toPredicate;
@@ -61,6 +76,11 @@ public abstract class AbstractRowPixelSort extends PixelSort {
         }
     }
 
+    /**Applies a pixel sorting algorithm to this array of Pixels
+     * (mutates the pixels and/or their ordering).
+     *
+     * @param pixels Array of Pixels to be sorted.
+     */
     protected abstract Pixel[] sort(Pixel[] pixels);
 
     private void sortRow(final Bitmap img, final int row) {
@@ -143,7 +163,7 @@ public abstract class AbstractRowPixelSort extends PixelSort {
                 }
                 Log.d(TAG, "Sorted.");
 
-                notifyCallbacks();
+                notifyListener();
             }
         }).start();
     }
@@ -186,6 +206,11 @@ public abstract class AbstractRowPixelSort extends PixelSort {
         }
     }
 
+    /**Returns the index of the first pixel in pixels satisfying the condition in fromPredicate.
+     *
+     * @param pixels The pixels to get the index from.
+     * @return The index of the first pixel in pixels satisfying the condition in fromPredicate.
+     */
     protected int getFromIndex(Pixel[] pixels) {
         int startIndex = 0;
 
@@ -199,6 +224,11 @@ public abstract class AbstractRowPixelSort extends PixelSort {
         return startIndex;
     }
 
+    /**Returns the index of the last pixel in pixels satisfying the condition in toPredicate.
+     *
+     * @param pixels The pixels to get the index from.
+     * @return The index of the last pixel in pixels satisfying the condition in toPredicate.
+     */
     protected int getToIndex(Pixel[] pixels) {
         int endIndex = pixels.length - 1;
 

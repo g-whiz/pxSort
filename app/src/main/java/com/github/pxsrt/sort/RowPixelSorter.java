@@ -18,12 +18,12 @@ import java.util.Comparator;
  *
  * Created by George on 2015-05-22.
  */
-public class RowPixelSort extends AbstractRowPixelSort {
+public class RowPixelSorter extends AbstractRowPixelSorter {
 
-    public static final String TAG = RowPixelSort.class.getSimpleName();
+    public static final String TAG = RowPixelSorter.class.getSimpleName();
 
-    public RowPixelSort(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
-                        Predicate<Pixel> toPredicate, int direction) {
+    public RowPixelSorter(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
+                          Predicate<Pixel> toPredicate, int direction) {
         super(comparator, fromPredicate, toPredicate, direction);
     }
 

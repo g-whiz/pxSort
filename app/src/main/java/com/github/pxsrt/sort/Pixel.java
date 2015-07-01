@@ -40,5 +40,47 @@ public class Pixel {
     public void setBlue(int value) {
         this.color = Color.rgb(red() ,green(), value);
     }
+
+    public float hue() {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+
+        return hsv[0];
+    }
+
+    public void setHue(float hue) {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+        hsv[0] = hue;
+        color = Color.HSVToColor(hsv);
+    }
+
+    public float saturation() {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+
+        return hsv[1];
+    }
+
+    public void setSaturation(float saturation) {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+        hsv[1] = saturation;
+        color = Color.HSVToColor(hsv);
+    }
+
+    public float value() {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+
+        return hsv[2];
+    }
+
+    public void setValue(float value) {
+        float[] hsv = null;
+        Color.colorToHSV(color, hsv);
+        hsv[2] = value;
+        color = Color.HSVToColor(hsv);
+    }
 }
 

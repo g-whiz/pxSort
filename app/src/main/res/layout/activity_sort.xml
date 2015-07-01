@@ -1,33 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="#0099cc"
-    tools:context="com.github.pxsrt.SortActivity">
+    android:orientation="horizontal" tools:context="com.github.pxsrt.SortActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed toPredicate present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <com.github.pxsrt.SortView
+    <FrameLayout
+        android:id="@+id/container_sort"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/container_sort_settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/sort_view" />
+        android:visibility="gone" />
 
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout android:id="@+id/fullscreen_content_controls" style="?metaButtonBarStyle"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay" android:orientation="horizontal"
-            tools:ignore="UselessParent">
-
-            <ImageButton
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_play_arrow_black_24dp"/>
-
-        </LinearLayout>
-    </FrameLayout>
-
-</FrameLayout>
+</LinearLayout>

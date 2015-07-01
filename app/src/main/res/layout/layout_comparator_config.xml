@@ -12,44 +12,48 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <com.github.pxsrt.ui.HelpButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showHelp"
+            android:layout_gravity="center_vertical"
+            app:messageTitle="@string/comparator"
+            app:messageBody="@string/comparator_description"
+            android:layout_margin="10dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/comparator"
             android:textSize="24dp"
-            android:padding="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textColor="@color/abc_primary_text_material_light" />
 
         <Spinner
+            android:id="@+id/comparator_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1" />
 
-        <com.github.pxsrt.ui.HelpButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="showHelp"
-            android:layout_gravity="center_vertical|end"
-            app:messageTitle="@string/comparator"
-            app:messageBody="@string/comparator_description"
-            android:layout_margin="10dp"/>
-
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginLeft="30dp">
+        android:layout_gravity="start"
+        android:layout_marginLeft="44dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/order"
+            android:text="@string/ordering"
             android:textSize="18dp"
             android:padding="10dp"
             android:textStyle="bold"

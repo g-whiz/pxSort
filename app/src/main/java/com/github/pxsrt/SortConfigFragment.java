@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.internal.util.Predicate;
-import com.github.pxsrt.sort.AsendorfSort;
+import com.github.pxsrt.sort.RowPixelSorter;
 import com.github.pxsrt.sort.Pixel;
-import com.github.pxsrt.sort.Sort;
+import com.github.pxsrt.sort.PixelSorter;
 import com.github.pxsrt.ui.HelpButton;
 
 import java.util.Comparator;
@@ -20,6 +20,9 @@ import java.util.Comparator;
  */
 public class SortConfigFragment extends Fragment {
     public static final String TAG = SortConfigFragment.class.getSimpleName();
+
+    //TODO Add functionality for loading presets.
+    //TODO Add functionality for randomizing.
 
     @Nullable
     @Override
@@ -31,11 +34,11 @@ public class SortConfigFragment extends Fragment {
         return sortSettingsView;
     }
 
-    public Sort getSort(){
+    public PixelSorter getSort(){
         return createTestSort();
     }
 
-    private Sort createTestSort(){
+    private PixelSorter createTestSort(){
 
         Comparator<Pixel> comparator = new Comparator<Pixel>() {
             @Override
@@ -64,7 +67,7 @@ public class SortConfigFragment extends Fragment {
             }
         };
 
-        return new AsendorfSort(comparator, fromPredicate, toPredicate, AsendorfSort.SORT_BY_ROW);
+        return new RowPixelSorter(comparator, fromPredicate, toPredicate, RowPixelSorter.SORT_BY_ROW);
     }
 
     public void showHelp(View view) {

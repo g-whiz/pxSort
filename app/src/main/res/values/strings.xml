@@ -2,9 +2,37 @@
     <string name="app_name">pxsrt</string>
 
     <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
+
+    <!-- SortActivity menu item titles: -->
+    <string name="action_start_sort">Start/Resume</string>
+    <string name="action_pause_sort">Pause</string>
+    <string name="action_save_image">Save</string>
+    <string name="action_apply_once">Apply Once</string>
+    <string name="action_sort_settings">Sort Settings</string>
+
+    <string name="sort_row">Row Sort</string>
+
+    <string name="comparator" >Comparator:</string>
+    <string name="comparator_description">The comparator you select determines what attributes of
+        each pixel will be used to decide ordering. The ordering chosen determines whether pixels are
+        sorted in ascending or descending ordering.</string>
+    <string name="ordering">Order:</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+
+    <string name="predicate">Predicate:</string>
+    <string name="predicate_description">The predicate you select determines the condition that
+        needs to be satisfied for a certain pixel to be selected.</string>
+
+    <string name="threshold">Threshold:</string>
+    <string name="lower_bound">Lower\nBound:</string>
+    <string name="upper_bound">Upper\nBound:</string>
 
     <string name="title_activity_sort">SortActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="dummy_number">000</string>
+    <string name="action_commit_sort_settings">Accept</string>
 </resources>

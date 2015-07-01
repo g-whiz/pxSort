@@ -1,24 +1,17 @@
 package com.github.pxsrt;
 
-import com.android.internal.util.Predicate;
 import com.github.pxsrt.util.SystemUiHider;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
-import android.view.MotionEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
-
-import java.util.Comparator;
 
 
 /**
@@ -29,69 +22,107 @@ import java.util.Comparator;
  */
 public class SortActivity extends Activity {
 
+    public static final int FPS = 30;
+
+    private SortFragment sortFragment;
+    private SortConfigFragment sortConfigFragment;
+    private Bitmap img;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sort);
 
-        Intent intent = getIntent();
-        String imgPath = intent.getStringExtra(MainActivity.IMG_PATH);
+        FragmentManager fragmentManager = getFragmentManager();
 
+        sortFragment = new SortFragment();
+        sortConfigFragment = new SortConfigFragment();
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.add(R.id.container_sort, sortFragment, SortFragment.TAG);
+        fragmentTransaction.add(R.id.container_sort_settings, sortConfigFragment, SortConfigFragment.TAG);
+        if (isDualPane()) {
+            showSortSettings();
+        }
+        fragmentTransaction.commit();
+
+        String imgPath = getIntent().getStringExtra(MainActivity.IMG_PATH);
         /*Set option for Bitmap to be mutable.*/
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inMutable = true;
 
-        setContentView(R.layout.activity_sort);
+        loadBitmap(imgPath, opts);
+        sortFragment.setPixelSorter(sortConfigFragment.getSort());
+    }
 
+    private boolean isDualPane() {
+        return getResources().getBoolean(R.bool.dual_pane);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_sort, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            // TODO: If Settings has multiple levels, Up should navigate up
-            // that hierarchy.
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+        switch(id) {
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                //
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                //
+                // TODO: If Settings has multiple levels, Up should navigate up
+                // that hierarchy.
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
+            case R.id.action_apply_once:
+                sortFragment.applySortAndDraw();
+                return true;
+
+            case R.id.action_start_sort:
+                sortFragment.runSort(FPS);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private Sort createTestSort(){
 
-        Comparator<Pixel> comparator = new Comparator<Pixel>() {
+
+    private void loadBitmap(final String path, final BitmapFactory.Options opts){
+        new Thread(new Runnable() {
             @Override
-            public int compare(Pixel px1, Pixel px2) {
-                if (px1.red() > px2.red()){
-                    return 1;
-                } else if (px1.red() == px2.red()) {
-                    return 0;
-                } else {
-                    return -1;
-                }
+            public void run() {
+                img = BitmapFactory.decodeFile(path, opts);
+                sortFragment.setImage(img);
             }
-        };
+        }).start();
+    }
 
-        Predicate<Pixel> fromPredicate = new Predicate<Pixel>() {
-            @Override
-            public boolean apply(Pixel px) {
-                return px.red() < px.blue();
-            }
-        };
+    private void showSortSettings() {
+        findViewById(R.id.container_sort_settings).setVisibility(View.VISIBLE);
+        invalidateOptionsMenu();
+    }
+    private void hideSortSettings() {
+        findViewById(R.id.container_sort_settings).setVisibility(View.GONE);
+        invalidateOptionsMenu();
+    }
 
-        Predicate<Pixel> toPredicate = new Predicate<Pixel>() {
-            @Override
-            public boolean apply(Pixel px) {
-                return px.red() > px.blue();
-            }
-        };
+    private void showSort() {
+        findViewById(R.id.container_sort).setVisibility(View.VISIBLE);
+        invalidateOptionsMenu();
+    }
 
-        return new AsendorfSort(comparator, fromPredicate, toPredicate, AsendorfSort.SORT_BY_ROW);
+    private void hideSort() {
+        findViewById(R.id.container_sort).setVisibility(View.GONE);
+        invalidateOptionsMenu();
     }
 }

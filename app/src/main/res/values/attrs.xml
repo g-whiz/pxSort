@@ -9,4 +9,9 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="HelpButton">
+        <attr name="messageTitle" format="string" />
+        <attr name="messageBody" format="string" />
+    </declare-styleable>
+
 </resources>
