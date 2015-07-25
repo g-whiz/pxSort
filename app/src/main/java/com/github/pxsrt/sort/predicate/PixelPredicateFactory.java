@@ -7,21 +7,22 @@ import com.github.pxsrt.sort.Pixel;
  */
 public class PixelPredicateFactory {
 
-    /**The predicate will return true if the pixel's component value is at or above the threshold.
-     * For use with {@link #createPredicate(String, String, Number) 
-     * createThresholdPredicate}
+    /**Return a new {@link ThresholdPredicate ThresholdPredicate} that returns true when a given
+     * pixel's component is above the predicate's threshold.
+     * For use with {@link #createPredicate(String, String, Number, Number) createPredicate}
      */
     public static final String ABOVE_THRESHOLD = ThresholdPredicate.ABOVE;
 
-    /**The predicate will return true if the pixel's component value is at or below the threshold.
-     * For use with {@link #createPredicate(String, String, Number) 
+    /**Return a new {@link ThresholdPredicate ThresholdPredicate} that returns true when a given
+     * pixel's component is below the predicate's threshold.
+     * For use with {@link #createPredicate(String, String, Number, Number)
      * createThresholdPredicate}
      */
     public static final String BELOW_THRESHOLD = ThresholdPredicate.BELOW;
 
-    /**The predicate will return true if the pixel's component valueis within the specified range.
-     * For use with {@link #createPredicate(String, String, Number, Number, Number, Number)
-     * createRangePredicate}
+    /**Return a new {@link RangePredicate RangePredicate}.
+     * For use with {@link #createPredicate(String, String, Number, Number)
+     * createPredicate}
      */
     public static final String WITHIN_RANGE = "Within Range";
 
@@ -45,50 +46,75 @@ public class PixelPredicateFactory {
 
     /**
      * Returns a new PixelPredicate according to the specified parameters.
-     * @param aboveOrBelow String Either {@link #ABOVE_THRESHOLD ABOVE_THRESHOLD} or {@link #BELOW_THRESHOLD BELOW_THRESHOLD}.
-     * @param component String The component of each {@link } on which the threshold will act.
-     * @param threshold Number The value of the PixelPredicate's threshold.
-     * @return
+     * @param type String Either {@link #ABOVE_THRESHOLD ABOVE_THRESHOLD},
+     * {@link #BELOW_THRESHOLD BELOW_THRESHOLD}, or {@link #WITHIN_RANGE WITHIN_RANGE}.
+     * @param component The component of each {@link Pixel Pixel} on which the threshold will act.
+     * @param val1 int If the given type is {@link #ABOVE_THRESHOLD ABOVE_THRESHOLD} or
+     * {@link #BELOW_THRESHOLD BELOW_THRESHOLD} this value is the threshold of the new
+     * PixelPredicate. If the given type is {@link #WITHIN_RANGE WITHIN_RANGE}, this value is the
+     * lower bounnd of the PixelPredicate's range.
+     * @param val2 int If the given type is {@link #ABOVE_THRESHOLD ABOVE_THRESHOLD} or
+     * {@link #BELOW_THRESHOLD BELOW_THRESHOLD} this value is discarded.
+     * If the given type is {@link #WITHIN_RANGE WITHIN_RANGE}, this value is the
+     * upper bounnd of the PixelPredicate's range.
+     * @return A new PixelPredicate
      */
-    public static PixelPredicate createPredicate(String aboveOrBelow, String component, Number threshold) {
+    public static PixelPredicate createPredicate(String type, String component,
+                                                 Number val1, Number val2){
+        if (type.equals(WITHIN_RANGE)) {
+            return createRangePredicate(component, val1, val2);
+        } else if (type.equals(ABOVE_THRESHOLD) || type.equals(BELOW_THRESHOLD)){
+            return createThresholdPredicate(type, component, val1);
+        }
+        return null;
+    }
+
+    private static ThresholdPredicate createThresholdPredicate(String aboveOrBelow, String component,
+                                                          Number threshold) {
         switch (component) {
             case RED:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0x00, 0xFF, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0x00, 0xFF, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.red();
                     }
                 };
             case GREEN:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0x00, 0xFF, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0x00, 0xFF, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.green();
                     }
                 };
             case BLUE:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0x00, 0xFF, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0x00, 0xFF, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.blue();
                     }
                 };
             case HUE:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0.0, 360.0, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0.0, 360.0, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.hue();
                     }
                 };
             case SATURATION:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0.0, 1.0, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0.0, 1.0, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.saturation();
                     }
                 };
             case VALUE:
-                return new ThresholdPredicate(component + " " + aboveOrBelow, 0.0, 1.0, aboveOrBelow, threshold) {
+                return new ThresholdPredicate(component + " " + aboveOrBelow,
+                        0.0, 1.0, aboveOrBelow, threshold) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.value();
@@ -98,47 +124,52 @@ public class PixelPredicateFactory {
         return null;
     }
 
-    public static PixelPredicate createPredicate(String name, String component,
-                                                 Number rangeMin, Number rangeMax,
-                                                 Number lowerBound, Number upperBound) {
+    private static RangePredicate createRangePredicate(String component, Number lowerBound,
+                                                      Number upperBound) {
         switch (component) {
             case RED:
-                return new RangePredicate(component + " Within Range", 0x00, 0xFF, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0x00, 0xFF,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.red();
                     }
                 };
             case GREEN:
-                return new RangePredicate(component + " Within Range", 0x00, 0xFF, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0x00, 0xFF,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.green();
                     }
                 };
             case BLUE:
-                return new RangePredicate(component + " Within Range", 0x00, 0xFF, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0x00, 0xFF,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.blue();
                     }
                 };
             case HUE:
-                return new RangePredicate(component + " Within Range", 0.0, 360.0, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0.0, 360.0,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.hue();
                     }
                 };
             case SATURATION:
-                return new RangePredicate(component + " Within Range", 0.0, 1.0, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0.0, 1.0,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.saturation();
                     }
                 };
             case VALUE:
-                return new RangePredicate(component + " Within Range", 0.0, 1.0, lowerBound, upperBound) {
+                return new RangePredicate(component + " Within Range", 0.0, 1.0,
+                        lowerBound, upperBound) {
                     @Override
                     public Number evaluate(Pixel input) {
                         return input.value();

@@ -22,7 +22,7 @@ public class SorterPresets {
 
     public static final String TAG = SorterPresets.class.getSimpleName();
 
-    private static final String PRESET_EXTENSION = ".preset";
+    private static final String PRESET_EXTENSION = ".pxsrt";
     private static final List<Preset> defaultPresets = new ArrayList<>();
     private static final List<Preset> userPresets = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class SorterPresets {
         return presets;
     }
 
-    public static void addUserPreset(Context context, String name, PixelSorter sorter){
+    public static void addUserPreset(String name, PixelSorter sorter){
         Preset preset = new Preset(name, generateFileName(name), sorter);
         userPresets.add(preset);
     }
@@ -96,9 +96,9 @@ public class SorterPresets {
     }
 
     public static class Preset {
-        private final String name;
-        private final String fileName;
-        private final PixelSorter sorter;
+        private String name;
+        private String fileName;
+        private PixelSorter sorter;
 
         public Preset(String name, String fileName, PixelSorter sorter) {
             this.name = name;
@@ -118,5 +118,16 @@ public class SorterPresets {
             return sorter;
         }
 
+        public void setSorter(PixelSorter sorter) {
+            this.sorter = sorter;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
     }
 }

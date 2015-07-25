@@ -28,7 +28,7 @@ public class SortConfigFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View sortSettingsView = inflater.inflate(R.layout.layout_fragment_sort_settings,
+        View sortSettingsView = inflater.inflate(R.layout.fragment_sorter_picker,
                 container, false);
 
         return sortSettingsView;

@@ -2,69 +2,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ComparatorSettingsFragment" >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.github.pxsrt.ui.HelpButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="showHelp"
-            android:layout_gravity="center_vertical"
-            app:messageTitle="@string/comparator"
-            app:messageBody="@string/comparator_description"
-            android:layout_margin="10dp"/>
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/comparator"
-            android:textSize="24dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:text="@string/sort_by"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/abc_primary_text_material_light" />
+            android:textColor="@color/primary_material_dark"/>
 
         <Spinner
             android:id="@+id/comparator_spinner"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_gravity="center_vertical" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="start"
-        android:layout_marginLeft="44dp">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/ordering"
-            android:textSize="18dp"
-            android:padding="10dp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/abc_primary_text_material_light" />
+            android:textColor="@color/primary_material_dark"/>
 
         <RadioGroup
-            android:id="@+id/radio_group_comparator_config"
-            android:layout_width="match_parent"
+            android:id="@+id/radio_group_comparator_order"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <RadioButton
                 android:layout_width="wrap_content"

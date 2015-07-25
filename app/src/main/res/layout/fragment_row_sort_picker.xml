@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/abc_control_padding_material"
+        android:layout_marginRight="@dimen/abc_control_padding_material">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/direction"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <RadioGroup
+                android:id="@+id/radio_group_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/sort_by_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_by_row"/>
+
+                <RadioButton
+                    android:id="@+id/sort_by_col"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/column_by_column"/>
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="20dp"
+            android:layout_height="match_parent" />
+        <fragment
+            android:id="@+id/fragment_comparator_picker"
+            android:name="com.github.pxsrt.ComparatorPickerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/abc_control_padding_material"
+            android:layout_gravity="center_horizontal"
+            tools:layout="@layout/fragment_comparator_picker" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/abc_control_padding_material"
+            android:text="@string/from_predicate_label"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <fragment
+            android:id="@+id/fragment_from_predicate_picker"
+            android:name="com.github.pxsrt.PredicatePickerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/abc_control_padding_material"
+            android:layout_gravity="center_horizontal"
+            tools:layout="@layout/fragment_predicate_picker" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/to_predicate_label"
+            android:layout_marginLeft="@dimen/abc_control_padding_material"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <fragment
+            android:id="@+id/fragment_to_predicate_picker"
+            android:name="com.github.pxsrt.PredicatePickerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/abc_control_padding_material"
+            android:layout_gravity="center_horizontal"
+            tools:layout="@layout/fragment_predicate_picker" />
+
+    </LinearLayout>
+</LinearLayout>

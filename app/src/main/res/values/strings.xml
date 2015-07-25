@@ -14,6 +14,16 @@
 
     <string name="sort_row">Row Sort</string>
 
+    <string name="sort_by">Sort By:</string>
+    <string name="direction">Direction:</string>
+    <string name="row_by_row">Horizontal</string>
+    <string name="column_by_column">Vertical</string>
+
+    <string name="tune_sorter_button_description">A button to expand the sorter picker view.</string>
+
+    <string name="from_predicate_label">From First Pixel With:</string>
+    <string name="to_predicate_label">To Last Pixel With:</string>
+
     <string name="comparator" >Comparator:</string>
     <string name="comparator_description">The comparator you select determines what attributes of
         each pixel will be used to decide ordering. The ordering chosen determines whether pixels are
