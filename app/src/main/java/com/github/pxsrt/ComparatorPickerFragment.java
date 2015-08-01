@@ -13,7 +13,6 @@ import android.widget.Spinner;
 
 import com.github.pxsrt.R;
 import com.github.pxsrt.sort.comparator.PixelComparator;
-import com.github.pxsrt.sort.comparator.PixelComparatorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +28,12 @@ public class ComparatorPickerFragment extends Fragment {
 
     private static final List<String> COMPONENT_TYPES = new ArrayList<>();
     static {
-        COMPONENT_TYPES.add(PixelComparatorFactory.RED);
-        COMPONENT_TYPES.add(PixelComparatorFactory.GREEN);
-        COMPONENT_TYPES.add(PixelComparatorFactory.BLUE);
-        COMPONENT_TYPES.add(PixelComparatorFactory.HUE);
-        COMPONENT_TYPES.add(PixelComparatorFactory.SATURATION);
-        COMPONENT_TYPES.add(PixelComparatorFactory.VALUE);
+        COMPONENT_TYPES.add(PixelComparator.RED);
+        COMPONENT_TYPES.add(PixelComparator.GREEN);
+        COMPONENT_TYPES.add(PixelComparator.BLUE);
+        COMPONENT_TYPES.add(PixelComparator.HUE);
+        COMPONENT_TYPES.add(PixelComparator.SATURATION);
+        COMPONENT_TYPES.add(PixelComparator.VALUE);
     }
 
     @Nullable
@@ -84,9 +83,9 @@ public class ComparatorPickerFragment extends Fragment {
 
         if (orderGroup != null) {
             if (orderGroup.getCheckedRadioButtonId() == R.id.ascending_order) {
-                return PixelComparatorFactory.ASCENDING_ORDER;
+                return PixelComparator.ASCENDING_ORDER;
             } else {
-                return PixelComparatorFactory.DESCENDING_ORDER;
+                return PixelComparator.DESCENDING_ORDER;
             }
         }
 
@@ -94,6 +93,6 @@ public class ComparatorPickerFragment extends Fragment {
     }
 
     public PixelComparator getComparator() {
-        return PixelComparatorFactory.createNew(getSelectedComponent(), getOrder());
+        return PixelComparator.createNew(getSelectedComponent(), getOrder());
     }
 }

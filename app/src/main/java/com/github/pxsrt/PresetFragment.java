@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.pxsrt.sort.PixelSorter;
-import com.github.pxsrt.sort.SorterPresets;
+import com.github.pxsrt.sort.presets.Preset;
 
 /**
  * Created by George on 2015-07-20.
@@ -41,6 +41,6 @@ public class PresetFragment extends Fragment{
     /**Interface for passing preset to sorter/pickerfragment*/
     public interface OnPresetPickedListener {
 
-        public void onPresetPicket(SorterPresets.Preset preset);
+        public void onPresetPicket(Preset preset);
     }
 }

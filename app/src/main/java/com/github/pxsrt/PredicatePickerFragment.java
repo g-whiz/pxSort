@@ -13,7 +13,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.pxsrt.sort.predicate.PixelPredicate;
-import com.github.pxsrt.sort.predicate.PixelPredicateFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +24,19 @@ public class PredicatePickerFragment extends Fragment{
 
     private static final List<String> PREDICATE_TYPES = new ArrayList<>();
     static {
-        PREDICATE_TYPES.add(PixelPredicateFactory.ABOVE_THRESHOLD);
-        PREDICATE_TYPES.add(PixelPredicateFactory.BELOW_THRESHOLD);
-        PREDICATE_TYPES.add(PixelPredicateFactory.WITHIN_RANGE);
+        PREDICATE_TYPES.add(PixelPredicate.ABOVE_THRESHOLD);
+        PREDICATE_TYPES.add(PixelPredicate.BELOW_THRESHOLD);
+        PREDICATE_TYPES.add(PixelPredicate.WITHIN_RANGE);
     }
 
     private static final List<String> COMPONENT_TYPES = new ArrayList<>();
     static {
-        COMPONENT_TYPES.add(PixelPredicateFactory.RED);
-        COMPONENT_TYPES.add(PixelPredicateFactory.GREEN);
-        COMPONENT_TYPES.add(PixelPredicateFactory.BLUE);
-        COMPONENT_TYPES.add(PixelPredicateFactory.HUE);
-        COMPONENT_TYPES.add(PixelPredicateFactory.SATURATION);
-        COMPONENT_TYPES.add(PixelPredicateFactory.VALUE);
+        COMPONENT_TYPES.add(PixelPredicate.RED);
+        COMPONENT_TYPES.add(PixelPredicate.GREEN);
+        COMPONENT_TYPES.add(PixelPredicate.BLUE);
+        COMPONENT_TYPES.add(PixelPredicate.HUE);
+        COMPONENT_TYPES.add(PixelPredicate.SATURATION);
+        COMPONENT_TYPES.add(PixelPredicate.VALUE);
     }
 
     private static final int HUE_SELECTOR_MIN = 0;
@@ -125,8 +124,8 @@ public class PredicatePickerFragment extends Fragment{
 
     private Number getPrimaryPickerValue(){
         if (getPrimaryPicker() != null) {
-            if (getSelectedComponent().equals(PixelPredicateFactory.VALUE)
-                    || getSelectedComponent().equals(PixelPredicateFactory.SATURATION)) {
+            if (getSelectedComponent().equals(PixelPredicate.VALUE)
+                    || getSelectedComponent().equals(PixelPredicate.SATURATION)) {
                 return ((double) getPrimaryPicker().getValue()) / 100.0;
             } else {
                 return getPrimaryPicker().getValue();
@@ -137,8 +136,8 @@ public class PredicatePickerFragment extends Fragment{
 
     private Number getSecondaryPickerValue(){
         if (getSecondaryPicker() != null) {
-            if (getSelectedComponent().equals(PixelPredicateFactory.VALUE)
-                    || getSelectedComponent().equals(PixelPredicateFactory.SATURATION)) {
+            if (getSelectedComponent().equals(PixelPredicate.VALUE)
+                    || getSelectedComponent().equals(PixelPredicate.SATURATION)) {
                 return ((double) getSecondaryPicker().getValue()) / 100.0;
             } else {
                 return getSecondaryPicker().getValue();
@@ -166,7 +165,7 @@ public class PredicatePickerFragment extends Fragment{
     }
 
     private void updateView() {
-        if (getSelectedPredicateType().equals(PixelPredicateFactory.WITHIN_RANGE)) {
+        if (getSelectedPredicateType().equals(PixelPredicate.WITHIN_RANGE)) {
             showSecondaryPicker(true);
             setPrimaryPickerTitle(R.string.lower_bound);
         } else {
@@ -204,7 +203,7 @@ public class PredicatePickerFragment extends Fragment{
 
             NumberPicker.Formatter formatter = null;
 
-            if (getSelectedComponent().equals(PixelPredicateFactory.HUE)) {
+            if (getSelectedComponent().equals(PixelPredicate.HUE)) {
                 setPickerRange(HUE_SELECTOR_MIN, HUE_SELECTOR_MAX);
                 formatter = new NumberPicker.Formatter() {
                     @Override
@@ -213,8 +212,8 @@ public class PredicatePickerFragment extends Fragment{
                     }
                 };
 
-            } else if (getSelectedComponent().equals(PixelPredicateFactory.SATURATION)
-                    || getSelectedComponent().equals(PixelPredicateFactory.VALUE)) {
+            } else if (getSelectedComponent().equals(PixelPredicate.SATURATION)
+                    || getSelectedComponent().equals(PixelPredicate.VALUE)) {
                 setPickerRange(VALUE_SELECTOR_MIN, VALUE_SELECTOR_MAX);
                 formatter = new NumberPicker.Formatter() {
                     @Override
@@ -223,9 +222,9 @@ public class PredicatePickerFragment extends Fragment{
                     }
                 };
 
-            } else if (getSelectedComponent().equals(PixelPredicateFactory.RED)
-                    || getSelectedComponent().equals(PixelPredicateFactory.GREEN)
-                    || getSelectedComponent().equals(PixelPredicateFactory.BLUE)) {
+            } else if (getSelectedComponent().equals(PixelPredicate.RED)
+                    || getSelectedComponent().equals(PixelPredicate.GREEN)
+                    || getSelectedComponent().equals(PixelPredicate.BLUE)) {
                 setPickerRange(RGB_SELECTOR_MIN, RGB_SELECTOR_MAX);
                 formatter = new NumberPicker.Formatter() {
                     @Override
@@ -241,7 +240,7 @@ public class PredicatePickerFragment extends Fragment{
     }
 
     public PixelPredicate getPredicate() {
-        return PixelPredicateFactory.createPredicate(predicateType, componentType,
+        return PixelPredicate.createPredicate(predicateType, componentType,
                 getPrimaryPickerValue(), getSecondaryPickerValue());
     }
 }

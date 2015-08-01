@@ -29,6 +29,38 @@ public abstract class AbstractRowPixelSorter extends PixelSorter {
     /**Sort images column-by-column.*/
     public static final int SORT_BY_COLUMN = 1;
 
+    public Comparator<Pixel> getComparator() {
+        return comparator;
+    }
+
+    public void setComparator(Comparator<Pixel> comparator) {
+        this.comparator = comparator;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
+    public Predicate<Pixel> getFromPredicate() {
+        return fromPredicate;
+    }
+
+    public void setFromPredicate(Predicate<Pixel> fromPredicate) {
+        this.fromPredicate = fromPredicate;
+    }
+
+    public Predicate<Pixel> getToPredicate() {
+        return toPredicate;
+    }
+
+    public void setToPredicate(Predicate<Pixel> toPredicate) {
+        this.toPredicate = toPredicate;
+    }
+
     /**The comparator determining pixel ordering in this PixelSort.*/
     protected Comparator<Pixel> comparator;
 

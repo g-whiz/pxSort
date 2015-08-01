@@ -13,19 +13,13 @@ public abstract class RangePredicate extends PixelPredicate {
     private final Number rangeMin;
     private final Number rangeMax;
 
-    public RangePredicate(String name,
-                          Number rangeMin, Number rangeMax,
-                          Number lowerBound, Number upperBound) {
-        super(name);
+    public RangePredicate(String type, String component,
+                          Number rangeMax, Number lowerBound, Number upperBound, Number rangeMin) {
+        super(type, component);
         this.rangeMin = rangeMin;
         this.rangeMax = rangeMax;
         setLowerBound(lowerBound);
         setUpperBound(upperBound);
-    }
-
-    public RangePredicate(String name,
-                          Number rangeMin, Number rangeMax) {
-        this(name, rangeMin, rangeMax, rangeMin, rangeMax);
     }
 
     @Override

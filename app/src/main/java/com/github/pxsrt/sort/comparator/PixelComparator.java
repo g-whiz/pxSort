@@ -16,15 +16,86 @@ public abstract class PixelComparator implements Comparator<Pixel>, Evaluator<Pi
     /**Values will be sorted in descending (left to right) order.*/
     public static final String DESCENDING_ORDER = "Descending Order";
 
+    /**The comparator will examine the pixel's red component.*/
+    public static final String RED = "Red";
+
+    /**The comparator will examine the pixel's green component.*/
+    public static final String GREEN = "Green";
+
+    /**The comparator will examine the pixel's blue component.*/
+    public static final String BLUE = "Blue";
+
+    /**The comparator will examine the pixel's hue component.*/
+    public static final String HUE = "Hue";
+
+    /**The comparator will examine the pixel's saturation component.*/
+    public static final String SATURATION = "Saturation";
+
+    /**The comparator will examine the pixel's value component.*/
+    public static final String VALUE = "Value";
+
     private volatile String ordering;
-    private final String name;
+
+    public String getComponent() {
+        return component;
+    }
+
+    private final String component;
+
+    public static PixelComparator createNew(String component, String ordering) {
+        switch (component) {
+            case RED:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.red();
+                    }
+                };
+            case GREEN:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.green();
+                    }
+                };
+            case BLUE:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.blue();
+                    }
+                };
+            case HUE:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.hue();
+                    }
+                };
+            case SATURATION:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.saturation();
+                    }
+                };
+            case VALUE:
+                return new PixelComparator(component, ordering) {
+                    @Override
+                    public Number evaluate(Pixel input) {
+                        return input.value();
+                    }
+                };
+        }
+        return null;
+    }
 
     /**
      * Main constructor. Ordering is set to DESCENDING_ORDER by default.
-     * @param name The name of this PixelComparator.
+     * @param component The component of this PixelComparator.
      */
-    public PixelComparator(String name, String ordering) {
-        this.name = name;
+    public PixelComparator(String component, String ordering) {
+        this.component = component;
         this.ordering = ordering;
     }
 
@@ -74,6 +145,6 @@ public abstract class PixelComparator implements Comparator<Pixel>, Evaluator<Pi
 
     @Override
     public String toString() {
-        return name;
+        return component;
     }
 }
