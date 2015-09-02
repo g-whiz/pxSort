@@ -1,17 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="#0099cc"
-    android:orientation="horizontal" tools:context="com.github.pxsrt.SortActivity">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".SortActivity">
 
-    <FrameLayout
-        android:id="@+id/container_sort"
+    <fragment
+        android:id="@+id/fragment_sort"
+        android:name="com.github.pxsrt.SortFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_sort"/>
 
-    <FrameLayout
-        android:id="@+id/container_sort_settings"
+    <ImageButton
+        android:id="@+id/tune_sorter_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_tune_black_24dp"
+        android:contentDescription="@string/tune_sorter_button_description"
+        style="@android:style/Widget.Holo.Button.Borderless"
+        android:background="@android:color/holo_blue_light"/>
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?metaButtonBarStyle"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@android:color/holo_purple"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/presets_container">
+
+            <fragment
+                android:id="@+id/fragment_sample_preset_1"
+                android:name="com.github.pxsrt.PresetFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_preset" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 </LinearLayout>

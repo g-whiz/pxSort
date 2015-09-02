@@ -1,9 +1,22 @@
 <resources>
+
+    <string-array name="components">
+        <item>Red Component</item>
+        <item>Green Component</item>
+        <item>Blue Component</item>
+        <item>Hue Component</item>
+        <item>Saturation Component</item>
+        <item>Value Component</item>
+    </string-array>
+
     <string name="app_name">pxsrt</string>
 
     <string name="hello_world">Hello world!</string>
 
     <string name="action_settings">Settings</string>
+    
+    <string name="description_preset_fragment_img">The thumbnail for this PresetFragment\'s Preset</string>
+    <string name="dummy_text_preset_fragment">&lt;PRESET&gt;</string>
 
     <!-- SortActivity menu item titles: -->
     <string name="action_start_sort">Start/Resume</string>
@@ -14,23 +27,25 @@
 
     <string name="sort_row">Row Sort</string>
 
-    <string name="sort_by">Sort By:</string>
+    <string name="sort_by">Sort Pixels By:</string>
     <string name="direction">Direction:</string>
-    <string name="row_by_row">Horizontal</string>
-    <string name="column_by_column">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="vertical">Vertical</string>
+
+    <string name="unnamed_preset">Unnamed Preset</string>
 
     <string name="tune_sorter_button_description">A button to expand the sorter picker view.</string>
 
-    <string name="from_predicate_label">From First Pixel With:</string>
-    <string name="to_predicate_label">To Last Pixel With:</string>
+    <string name="from_predicate_title">From Pixel With:</string>
+    <string name="to_predicate_title">To Pixel With:</string>
 
     <string name="comparator" >Comparator:</string>
     <string name="comparator_description">The comparator you select determines what attributes of
         each pixel will be used to decide ordering. The ordering chosen determines whether pixels are
         sorted in ascending or descending ordering.</string>
-    <string name="ordering">Order:</string>
-    <string name="ascending">Ascending</string>
-    <string name="descending">Descending</string>
+    <string name="ordering">In:</string>
+    <string name="ascending">Ascending Order</string>
+    <string name="descending">Descending Order</string>
 
     <string name="predicate">Predicate:</string>
     <string name="predicate_description">The predicate you select determines the condition that
@@ -39,6 +54,9 @@
     <string name="threshold">Threshold:</string>
     <string name="lower_bound">Lower\nBound:</string>
     <string name="upper_bound">Upper\nBound:</string>
+
+    <string name="above">Above:</string>
+    <string name="below">Below:</string>
 
     <string name="title_activity_sort">SortActivity</string>
     <string name="dummy_button">Dummy Button</string>

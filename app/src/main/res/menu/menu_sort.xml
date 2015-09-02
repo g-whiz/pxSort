@@ -39,6 +39,6 @@
         android:icon="@drawable/ic_check_black_24dp"
         android:orderInCategory="40"
         android:visible="false"
-        app:showAsAction="ifRoom|collapseActionView" />
+        app:showAsAction="ifRoom|collapseActionView|always" />
 
 </menu>

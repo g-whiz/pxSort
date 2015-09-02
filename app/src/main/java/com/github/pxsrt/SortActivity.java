@@ -1,17 +1,19 @@
 package com.github.pxsrt;
 
+import com.github.pxsrt.presets.Preset;
+import com.github.pxsrt.presets.PresetManager;
 import com.github.pxsrt.util.SystemUiHider;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.LinearLayout;
+
+import java.util.List;
 
 
 /**
@@ -20,12 +22,12 @@ import android.support.v4.app.NavUtils;
  *
  * @see SystemUiHider
  */
-public class SortActivity extends Activity {
+public class SortActivity extends Activity implements PresetFragment.OnPresetSelectedListener{
 
     public static final int FPS = 30;
 
     private SortFragment sortFragment;
-    private SortConfigFragment sortConfigFragment;
+    private PresetManager presetManager;
     private Bitmap img;
 
     @Override
@@ -33,31 +35,31 @@ public class SortActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        presetManager = new PresetManager(this);
+        addPresetsToView(presetManager.getPresets());
 
-        sortFragment = new SortFragment();
-        sortConfigFragment = new SortConfigFragment();
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.add(R.id.container_sort, sortFragment, SortFragment.TAG);
-        fragmentTransaction.add(R.id.container_sort_settings, sortConfigFragment, SortConfigFragment.TAG);
-        if (isDualPane()) {
-            showSortSettings();
-        }
-        fragmentTransaction.commit();
+        sortFragment = (SortFragment) getFragmentManager().findFragmentById(R.id.fragment_sort);
 
         String imgPath = getIntent().getStringExtra(MainActivity.IMG_PATH);
         /*Set option for Bitmap to be mutable.*/
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inMutable = true;
-
-        loadBitmap(imgPath, opts);
-        sortFragment.setPixelSorter(sortConfigFragment.getSort());
     }
 
-    private boolean isDualPane() {
-        return getResources().getBoolean(R.bool.dual_pane);
+    private void addPresetsToView(List<Preset> presets) {
+        LinearLayout presetsContainer = (LinearLayout) findViewById(R.id.presets_container);
+        int index = 0;
+
+        for(Preset preset : presets) {
+            PresetFragment presetFragment = new PresetFragment();
+            presetFragment.setPreset(preset);
+
+            if (presetFragment.getView() != null) {
+                presetsContainer.addView(presetFragment.getView(), index);
+                presetFragment.setListener(this);
+                index++;
+            }
+        }
     }
 
     @Override
@@ -107,22 +109,8 @@ public class SortActivity extends Activity {
         }).start();
     }
 
-    private void showSortSettings() {
-        findViewById(R.id.container_sort_settings).setVisibility(View.VISIBLE);
-        invalidateOptionsMenu();
-    }
-    private void hideSortSettings() {
-        findViewById(R.id.container_sort_settings).setVisibility(View.GONE);
-        invalidateOptionsMenu();
-    }
+    @Override
+    public void onPresetSelected(Preset preset) {
 
-    private void showSort() {
-        findViewById(R.id.container_sort).setVisibility(View.VISIBLE);
-        invalidateOptionsMenu();
-    }
-
-    private void hideSort() {
-        findViewById(R.id.container_sort).setVisibility(View.GONE);
-        invalidateOptionsMenu();
     }
 }

@@ -13,5 +13,9 @@
         <attr name="messageTitle" format="string" />
         <attr name="messageBody" format="string" />
     </declare-styleable>
+    
+    <declare-styleable name="PredicateEditView">
+        <attr name="titleText" format="string" />
+    </declare-styleable>
 
 </resources>

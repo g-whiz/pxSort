@@ -1,46 +1,96 @@
 package com.github.pxsrt;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.github.pxsrt.sort.PixelSorter;
-import com.github.pxsrt.sort.presets.Preset;
+import com.github.pxsrt.presets.Preset;
 
-/**
- * Created by George on 2015-07-20.
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/** todo setting/creating thumbnails (medium priority)
+ * Created by George on 2015-08-02.
  */
-public class PresetFragment extends Fragment{
+public class PresetFragment extends Fragment implements View.OnClickListener{
 
-    private String name;
-    private PixelSorter sorter;
-    private int drawableResId;
+    public static final String TAG = PresetFragment.class.getSimpleName();
+    private Preset preset = null;
 
-    public void setDrawableResId(int drawableResId) {
-        this.drawableResId = drawableResId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSorter(PixelSorter sorter) {
-        this.sorter = sorter;
-    }
+    private OnPresetSelectedListener listener;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return null;
+
+        View view = inflater.inflate(R.layout.fragment_preset, container, false);
+        view.setOnClickListener(this);
+        return view;
     }
 
-    /**Interface for passing preset to sorter/pickerfragment*/
-    public interface OnPresetPickedListener {
+    private void updateTitle() {
+        if (getView() != null && preset != null) {
+            TextView presetTitle = (TextView) getView().findViewById(R.id.preset_title);
+            presetTitle.setText(preset.getName());
+        }
+    }
 
-        public void onPresetPicket(Preset preset);
+    private void updateThumbnail() {
+        Context context = getActivity();
+
+        if(getView() != null && preset != null) {
+            ImageView presetThumbnail = (ImageView) getView().findViewById(R.id.preset_thumbnail);
+            InputStream thumbnailStream = null;
+
+            try {
+                if (preset.isDefault()) {
+                    thumbnailStream = context.getAssets().open(preset.getThumbnailFileName());
+                } else {
+                    thumbnailStream = new FileInputStream(
+                            new File(context.getFilesDir(), preset.getThumbnailFileName()));
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "An error occured while decoding the thumbnail for " + preset.getName()
+                        + ". Using default thumbnail.", e);
+            }
+
+            Bitmap thumbnailBm = BitmapFactory.decodeStream(thumbnailStream);
+            presetThumbnail.setImageBitmap(thumbnailBm);
+        }
+    }
+
+    public void setPreset(Preset preset) {
+        this.preset = preset;
+        updateTitle();
+        updateThumbnail();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (listener != null) {
+            listener.onPresetSelected(preset);
+        }
+    }
+
+    public void setListener(OnPresetSelectedListener listener) {
+        this.listener = listener;
+        updateTitle();
+    }
+
+    public interface OnPresetSelectedListener {
+        void onPresetSelected(Preset preset);
     }
 }

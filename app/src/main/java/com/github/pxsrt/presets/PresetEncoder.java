@@ -1,15 +1,13 @@
-package com.github.pxsrt.sort.presets;
+package com.github.pxsrt.presets;
 
 import android.util.Log;
 
 import com.github.pxsrt.sort.PixelSorter;
 import com.github.pxsrt.sort.RowPixelSorter;
-import com.github.pxsrt.sort.comparator.PixelComparator;
-import com.github.pxsrt.sort.predicate.PixelPredicate;
-import com.github.pxsrt.sort.predicate.RangePredicate;
-import com.github.pxsrt.sort.predicate.ThresholdPredicate;
+import com.github.pxsrt.sort.comparator.ComponentComparator;
+import com.github.pxsrt.sort.predicate.ComponentPredicate;
 
-import static com.github.pxsrt.sort.presets.PresetConstants.*;
+import static com.github.pxsrt.presets.PresetConstants.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,13 +39,11 @@ public class PresetEncoder {
                 RowPixelSorter rowSorter = (RowPixelSorter) sorter;
                 encodedSorter.put(SORTER_TYPE, ROW_PIXEL_SORTER);
                 encodedSorter.put(COMPARATOR, encodeComparator(
-                        (PixelComparator) rowSorter.getComparator()));
+                        (ComponentComparator) rowSorter.getComparator()));
 
-                encodedSorter.put(FROM_PREDICATE, encodePredicate(
-                        (PixelPredicate) rowSorter.getFromPredicate()));
+                encodedSorter.put(FROM_PREDICATE, encodePredicate(rowSorter.getFromPredicate()));
 
-                encodedSorter.put(TO_PREDICATE, encodePredicate(
-                        (PixelPredicate) rowSorter.getToPredicate()));
+                encodedSorter.put(TO_PREDICATE, encodePredicate(rowSorter.getToPredicate()));
 
                 encodedSorter.put(DIRECTION, rowSorter.getDirection());
             } else {
@@ -60,7 +56,7 @@ public class PresetEncoder {
         return encodedSorter;
     }
 
-    private static JSONObject encodeComparator(PixelComparator comparator) {
+    private static JSONObject encodeComparator(ComponentComparator comparator) {
         JSONObject encodedComparator = new JSONObject();
 
         try {
@@ -74,24 +70,13 @@ public class PresetEncoder {
         return encodedComparator;
     }
 
-    private static JSONObject encodePredicate(PixelPredicate predicate) {
+    private static JSONObject encodePredicate(ComponentPredicate predicate) {
         JSONObject encodedPredicate = new JSONObject();
 
         try {
-            encodedPredicate.put(PREDICATE_TYPE, predicate.getType());
             encodedPredicate.put(COMPONENT, predicate.getComponent());
-
-            if (predicate instanceof ThresholdPredicate) {
-                encodedPredicate.put(THRESHOLD,
-                        ((ThresholdPredicate) predicate).getThreshold().doubleValue());
-            } else if (predicate instanceof RangePredicate) {
-                encodedPredicate.put(UPPER_BOUND,
-                        ((RangePredicate) predicate).getUpperBound().doubleValue());
-                encodedPredicate.put(LOWER_BOUND,
-                        ((RangePredicate) predicate).getLowerBound().doubleValue());
-            } else {
-                return null;
-            }
+            encodedPredicate.put(LOWER_BOUND, predicate.getLowerBound());
+            encodedPredicate.put(UPPER_BOUND, predicate.getUpperBound());
         } catch (JSONException e) {
             Log.e(TAG, "An error occurred while encoding a preset's predicate.", e);
             return null;

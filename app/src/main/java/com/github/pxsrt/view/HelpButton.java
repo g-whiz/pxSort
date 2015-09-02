@@ -1,4 +1,4 @@
-package com.github.pxsrt.ui;
+package com.github.pxsrt.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -1,4 +1,4 @@
-package com.github.pxsrt.sort.presets;
+package com.github.pxsrt.presets;
 
 import com.github.pxsrt.sort.PixelSorter;
 

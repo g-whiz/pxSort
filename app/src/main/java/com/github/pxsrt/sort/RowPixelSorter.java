@@ -1,6 +1,8 @@
 package com.github.pxsrt.sort;
 
 import com.android.internal.util.Predicate;
+import com.github.pxsrt.sort.comparator.ComponentComparator;
+import com.github.pxsrt.sort.predicate.ComponentPredicate;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,8 +24,8 @@ public class RowPixelSorter extends AbstractRowPixelSorter {
 
     public static final String TAG = RowPixelSorter.class.getSimpleName();
 
-    public RowPixelSorter(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
-                          Predicate<Pixel> toPredicate, int direction) {
+    public RowPixelSorter(ComponentComparator comparator, ComponentPredicate fromPredicate,
+                          ComponentPredicate toPredicate, int direction) {
         super(comparator, fromPredicate, toPredicate, direction);
     }
 

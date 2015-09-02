@@ -1,8 +1,6 @@
-package com.github.pxsrt.sort.presets;
+package com.github.pxsrt.presets;
 
 import com.github.pxsrt.sort.RowPixelSorter;
-import com.github.pxsrt.sort.predicate.RangePredicate;
-import com.github.pxsrt.sort.predicate.ThresholdPredicate;
 
 /**
  * Created by George on 2015-07-27.

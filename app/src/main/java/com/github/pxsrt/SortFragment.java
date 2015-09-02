@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.pxsrt.sort.PixelSorter;
-import com.github.pxsrt.ui.SortView;
+import com.github.pxsrt.view.SortView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +39,7 @@ public class SortFragment extends Fragment implements SurfaceHolder.Callback, Pi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.layout_fragment_sort, container, false);
+        View view = inflater.inflate(R.layout.fragment_sort, container, false);
         sortView = ((SortView) view.findViewById(R.id.sort_view));
         sortView.getHolder().addCallback(this);
 

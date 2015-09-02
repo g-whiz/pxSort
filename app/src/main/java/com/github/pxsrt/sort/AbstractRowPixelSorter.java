@@ -1,9 +1,11 @@
 package com.github.pxsrt.sort;
 
 import android.graphics.Bitmap;
+import android.provider.Settings;
 import android.util.Log;
 
-import com.android.internal.util.Predicate;
+import com.github.pxsrt.sort.comparator.ComponentComparator;
+import com.github.pxsrt.sort.predicate.ComponentPredicate;
 
 import java.util.Comparator;
 import java.util.concurrent.Executor;
@@ -24,16 +26,16 @@ public abstract class AbstractRowPixelSorter extends PixelSorter {
     public static final String TAG = AbstractRowPixelSorter.class.getSimpleName();
 
     /**Sort images row-by-row. */
-    public static final int SORT_BY_ROW = 0;
+    public static final int HORIZONTAL = 0;
 
     /**Sort images column-by-column.*/
-    public static final int SORT_BY_COLUMN = 1;
+    public static final int VERTICAL = 1;
 
-    public Comparator<Pixel> getComparator() {
+    public ComponentComparator getComparator() {
         return comparator;
     }
 
-    public void setComparator(Comparator<Pixel> comparator) {
+    public void setComparator(ComponentComparator comparator) {
         this.comparator = comparator;
     }
 
@@ -45,38 +47,37 @@ public abstract class AbstractRowPixelSorter extends PixelSorter {
         this.direction = direction;
     }
 
-    public Predicate<Pixel> getFromPredicate() {
+    public ComponentPredicate getFromPredicate() {
         return fromPredicate;
     }
 
-    public void setFromPredicate(Predicate<Pixel> fromPredicate) {
+    public void setFromPredicate(ComponentPredicate fromPredicate) {
         this.fromPredicate = fromPredicate;
     }
 
-    public Predicate<Pixel> getToPredicate() {
+    public ComponentPredicate getToPredicate() {
         return toPredicate;
     }
 
-    public void setToPredicate(Predicate<Pixel> toPredicate) {
+    public void setToPredicate(ComponentPredicate toPredicate) {
         this.toPredicate = toPredicate;
     }
 
     /**The comparator determining pixel ordering in this PixelSort.*/
-    protected Comparator<Pixel> comparator;
+    protected ComponentComparator comparator;
 
     /**The predicate determining the index in each row/column to apply this PixelSort's
      * pixel sorting algorithm from.
      */
-    protected Predicate<Pixel> fromPredicate;
+    protected ComponentPredicate fromPredicate;
 
     /**The predicate determining the index in each row/column to apply this PixelSort's
      * pixel sorting algorithm from.
      */
-    protected Predicate<Pixel> toPredicate;
+    protected ComponentPredicate toPredicate;
 
     private Executor executor;
-    private static final int CORE_POOL_SIZE = 4;
-    private static final int MAX_POOL_SIZE = 16;
+    private static final int POOL_SIZE = Runtime.getRuntime().availableProcessors();
     private static final long KEEP_ALIVE_TIME = 500L; // In milliseconds.
 
     private int rowsSorted;
@@ -89,22 +90,22 @@ public abstract class AbstractRowPixelSorter extends PixelSorter {
      * @param comparator Comparator which determines how pixels are ordered when sorted.
      * @param fromPredicate Predicate determining the first pixel of each row to sort from.
      * @param toPredicate Predicate determining the last pixel of each row to sort to.
-     * @param direction Either SORT_BY_ROW or SORT_BY_COLUMN.
+     * @param direction Either HORIZONTAL or VERTICAL.
      */
-    protected AbstractRowPixelSorter(Comparator<Pixel> comparator, Predicate<Pixel> fromPredicate,
-                                     Predicate<Pixel> toPredicate, int direction) {
+    protected AbstractRowPixelSorter(ComponentComparator comparator, ComponentPredicate fromPredicate,
+                                     ComponentPredicate toPredicate, int direction) {
         this.comparator = comparator;
         this.fromPredicate = fromPredicate;
         this.toPredicate = toPredicate;
 
-        this.executor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE,
+        this.executor = new ThreadPoolExecutor(POOL_SIZE, POOL_SIZE,
                 KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
-        if (direction == SORT_BY_COLUMN || direction == SORT_BY_ROW) {
+        if (direction == VERTICAL || direction == HORIZONTAL) {
             this.direction = direction;
         } else {
-            Log.d(TAG, "Invalid direction. Using SORT_BY_ROW by default.");
-            this.direction = SORT_BY_ROW;
+            Log.d(TAG, "Invalid direction. Using HORIZONTAL by default.");
+            this.direction = HORIZONTAL;
         }
     }
 
@@ -169,13 +170,13 @@ public abstract class AbstractRowPixelSorter extends PixelSorter {
                 Log.d(TAG, "Sorting...");
 
                 switch (direction) {
-                    case SORT_BY_ROW:
+                    case HORIZONTAL:
                         for (int row = 0; row < img.getHeight(); row++) {
                             sortRow(img, row);
                         }
                         break;
 
-                    case SORT_BY_COLUMN:
+                    case VERTICAL:
                         for (int col = 0; col < img.getWidth(); col++) {
                             sortColumn(img, col);
                         }
