@@ -3,42 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SortActivity">
 
-    <item android:id="@+id/action_start_sort"
-        android:title="@string/action_start_sort"
-        android:icon="@drawable/ic_play_arrow_black_24dp"
-        android:orderInCategory="5"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item android:id="@+id/action_pause_sort"
-        android:title="@string/action_pause_sort"
-        android:icon="@drawable/ic_pause_black_24dp"
-        android:orderInCategory="6"
-        android:visible="false"
-        app:showAsAction="ifRoom|collapseActionView"/>
-
     <item android:id="@+id/action_save_image"
         android:title="@string/action_save_image"
         android:icon="@drawable/ic_save_black_24dp"
         android:orderInCategory="10"
-        app:showAsAction="ifRoom|collapseActionView"/>
-
-    <item android:id="@+id/action_apply_once"
-        android:title="@string/action_apply_once"
-        android:icon="@drawable/ic_skip_next_black_24dp"
-        android:orderInCategory="20"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item android:id="@+id/action_sort_settings"
-        android:title="@string/action_sort_settings"
-        android:icon="@drawable/ic_tune_black_24dp"
-        android:orderInCategory="30"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item android:id="@+id/action_commit_sort_settings"
-        android:title="@string/action_commit_sort_settings"
-        android:icon="@drawable/ic_check_black_24dp"
-        android:orderInCategory="40"
-        android:visible="false"
-        app:showAsAction="ifRoom|collapseActionView|always" />
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>

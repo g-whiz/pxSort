@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/unnamed_preset"
-        style="@style/Base.TextAppearance.AppCompat.Subhead"/>
+        style="@style/TextAppearance.AppCompat.Subhead.Inverse"/>
 
     <View
         android:layout_height="1dp"
@@ -18,7 +18,7 @@
         android:layout_marginRight="4dp"
         android:background="@color/hint_foreground_material_light"/>
 
-    <com.github.pxsrt.view.SorterEditView
+    <io.github.pxsrt.widget.SorterEditView
         android:id="@+id/sorter_edit_view"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"/>

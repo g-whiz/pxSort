@@ -4,5 +4,5 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/dummy_number"
-    style="@style/SpinnerItem"
+    style="@style/TextAppearance.AppCompat.Subhead"
     xmlns:android="http://schemas.android.com/apk/res/android" />

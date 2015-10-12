@@ -6,22 +6,64 @@
     android:orientation="vertical"
     tools:context=".SortActivity">
 
-    <fragment
-        android:id="@+id/fragment_sort"
-        android:name="com.github.pxsrt.SortFragment"
+    <ImageView
+        android:id="@+id/sort_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:layout="@layout/fragment_sort"/>
+        android:layout_weight="4"
+        android:contentDescription="@string/sort_view_content_description"
+        android:background="@android:color/holo_blue_dark"/>
 
     <ImageButton
-        android:id="@+id/tune_sorter_button"
+        android:id="@+id/edit_preset_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_tune_black_24dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_tune_black_36dp"
         android:contentDescription="@string/tune_sorter_button_description"
         style="@android:style/Widget.Holo.Button.Borderless"
         android:background="@android:color/holo_blue_light"/>
+
+    <LinearLayout
+        android:id="@+id/preset_edit_button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/cancel_edit_button"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:src="@drawable/abc_ic_clear_mtrl_alpha"
+            android:background="@android:color/holo_red_dark"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:contentDescription="@string/cancel_edit_button_description" />
+
+        <ImageButton
+            android:id="@+id/commit_edit_button"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_check_black_24dp"
+            android:background="@android:color/holo_green_dark"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:contentDescription="@string/commit_edit_button_description" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/preset_edit_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:visibility="gone">
+
+        <io.github.pxsrt.widget.PresetEditView
+            android:id="@+id/preset_edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </ScrollView>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -31,20 +73,10 @@
         android:background="@android:color/holo_purple"
         android:orientation="horizontal" >
 
-        <LinearLayout
+        <io.github.pxsrt.widget.PresetSelectorView
+            android:id="@+id/preset_selector_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/presets_container">
-
-            <fragment
-                android:id="@+id/fragment_sample_preset_1"
-                android:name="com.github.pxsrt.PresetFragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_preset" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"/>
 
     </HorizontalScrollView>
 </LinearLayout>

@@ -1,15 +1,9 @@
 <resources>
 
-    <string-array name="components">
-        <item>Red Component</item>
-        <item>Green Component</item>
-        <item>Blue Component</item>
-        <item>Hue Component</item>
-        <item>Saturation Component</item>
-        <item>Value Component</item>
-    </string-array>
+    <string name="sort_view_content_description">This ImageView contains a preview of the loaded image, sorted with the selected preset.</string>
 
-    <string name="app_name">pxsrt</string>
+    <string name="app_name">PicSort</string>
+    <string name="load_image">Load Image</string>
 
     <string name="hello_world">Hello world!</string>
 
@@ -21,7 +15,7 @@
     <!-- SortActivity menu item titles: -->
     <string name="action_start_sort">Start/Resume</string>
     <string name="action_pause_sort">Pause</string>
-    <string name="action_save_image">Save</string>
+    <string name="action_save_image">Save Image</string>
     <string name="action_apply_once">Apply Once</string>
     <string name="action_sort_settings">Sort Settings</string>
 
@@ -33,8 +27,12 @@
     <string name="vertical">Vertical</string>
 
     <string name="unnamed_preset">Unnamed Preset</string>
+    <string name="new_preset">New</string>
+    <string name="no_preset">None</string>
 
-    <string name="tune_sorter_button_description">A button to expand the sorter picker view.</string>
+    <string name="tune_sorter_button_description">A button to expand the Preset edit panel.</string>
+    <string name="cancel_edit_button_description">A button to cancel any changes to the active preset. Collapses the Preset edit panel.</string>
+    <string name="commit_edit_button_description">A button to commit any changes to the active preset. Collapses the Preset edit panel.</string>
 
     <string name="from_predicate_title">From Pixel With:</string>
     <string name="to_predicate_title">To Pixel With:</string>
