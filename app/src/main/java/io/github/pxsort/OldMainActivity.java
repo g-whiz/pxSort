@@ -1,4 +1,4 @@
-package io.github.pxsrt;
+package io.github.pxsort;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class MainActivity extends Activity {
+public class OldMainActivity extends Activity {
 
     //TODO -button to take a photo then sort it
     //TODO -button to choose photo then sort
@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     //TODO improve UI responsiveness and sort performance -
     //TODO -two fragments: one containing the SortView, one containing the Sort 'fine tuning' View
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = OldMainActivity.class.getSimpleName();
     public static final String IMG_PATH = "IMG_PATH";
 
     public static final int SELECT_IMAGE = 1;
@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_old_main);
     }
 
 
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
             Log.d(TAG, "Image selected. Path: " + imgPath);
             cursor.close();
 
-            Intent intent = new Intent(this, SortActivity.class);
+            Intent intent = new Intent(this, OldSortActivity.class);
             intent.putExtra(IMG_PATH, imgPath);
 
             Log.d(TAG, "Starting SortActivity.");

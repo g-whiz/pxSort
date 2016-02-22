@@ -11,39 +11,12 @@
         android:layout_width="match_parent"
         android:layout_weight="1">
 
-        <!-- TODO decide on whether to remove the following layout -->
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/yellow_light" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/cyan_light" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/magenta_light" />
-
-        </LinearLayout>
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/desc_logo"
             android:padding="30dp"
-            android:src="@drawable/pxsort_logo_1"/>
+            android:src="@drawable/pxsort_logo"/>
 
         <LinearLayout
             android:layout_height="wrap_content"
@@ -120,7 +93,7 @@
                 app:layout_widthPercent="100%"
                 app:layout_aspectRatio="100%"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_filters_alt_96dp"
+                android:src="@drawable/ic_filters_96dp"
                 style="@style/MagentaButton"
                 android:onClick="openFilterManager"/>
 
