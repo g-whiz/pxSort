@@ -1,82 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    tools:context=".SortActivity">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/sort_view"
+    <FrameLayout android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:contentDescription="@string/sort_view_content_description"
-        android:background="@android:color/holo_blue_dark"/>
+        android:layout_weight="1">
 
-    <ImageButton
-        android:id="@+id/edit_preset_button"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:src="@drawable/ic_tune_black_36dp"
-        android:contentDescription="@string/tune_sorter_button_description"
-        style="@android:style/Widget.Holo.Button.Borderless"
-        android:background="@android:color/holo_blue_light"/>
+        <LinearLayout android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
 
-    <LinearLayout
-        android:id="@+id/preset_edit_button_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back_24dp"
+                android:layout_weight="1"
+                style="@style/CyanButton"/>
 
-        <ImageButton
-            android:id="@+id/cancel_edit_button"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:src="@drawable/abc_ic_clear_mtrl_alpha"
-            android:background="@android:color/holo_red_dark"
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:contentDescription="@string/cancel_edit_button_description" />
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_filter_stack_24dp"
+                android:layout_weight="1"
+                style="@style/MagentaButton"/>
 
-        <ImageButton
-            android:id="@+id/commit_edit_button"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_check_black_24dp"
-            android:background="@android:color/holo_green_dark"
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:contentDescription="@string/commit_edit_button_description" />
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_save_24dp"
+                android:layout_weight="1"
+                style="@style/YellowButton"/>
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/preset_edit_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:visibility="gone">
+    </FrameLayout>
 
-        <io.github.pxsrt.widget.PresetEditView
-            android:id="@+id/preset_edit_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </ScrollView>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?metaButtonBarStyle"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@android:color/holo_purple"
-        android:orientation="horizontal" >
-
-        <io.github.pxsrt.widget.PresetSelectorView
-            android:id="@+id/preset_selector_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </HorizontalScrollView>
 </LinearLayout>
