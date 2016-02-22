@@ -1,40 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_dark"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.MainActivity">
+
+    <FrameLayout
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+
+        <!-- TODO decide on whether to remove the following layout -->
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/yellow_light" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/cyan_light" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/magenta_light" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_logo"
+            android:padding="30dp"
+            android:src="@drawable/pxsort_logo_1"/>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:paddingBottom="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/load"
+                android:gravity="center"
+                android:textColor="@color/cyan"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="pickImage"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filters"
+                android:gravity="center"
+                android:textColor="@color/magenta"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="openFilterManager"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/snap"
+                android:gravity="center"
+                android:textColor="@color/yellow"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="takePicture"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:baselineAligned="false"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_width="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="100dp"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textSize="100sp"
-            android:textColor="@android:color/holo_blue_bright"
-            style="@style/TextAppearance.AppCompat.Title.Inverse"/>
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+           <ImageButton
+               android:id="@+id/button_load"
+               android:contentDescription="@string/desc_load"
+               app:layout_widthPercent="100%"
+               app:layout_aspectRatio="100%"
+               android:background="@color/transparent"
+               android:src="@drawable/ic_load_96dp"
+               style="@style/CyanButton"
+               android:onClick="pickImage"/>
+        </android.support.percent.PercentRelativeLayout>
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/button_filters"
+                android:contentDescription="@string/desc_filters"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="100%"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_filters_alt_96dp"
+                style="@style/MagentaButton"
+                android:onClick="openFilterManager"/>
+
+        </android.support.percent.PercentRelativeLayout>
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/button_snap"
+                android:contentDescription="@string/desc_snap"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="100%"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_snap_96dp"
+                style="@style/YellowButton"
+                android:onClick="takePicture" />
+
+        </android.support.percent.PercentRelativeLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_load_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:text="@string/load_image"
-        android:textSize="25sp"
-        android:background="@android:color/holo_purple"
-        android:onClick="pickImage"
-        style="@android:style/Widget.Holo.Button.Borderless"/>
-
-</FrameLayout>
+</LinearLayout>
