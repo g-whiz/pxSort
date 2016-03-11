@@ -6,7 +6,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig {
-        applicationId 'io.github.pxsrt'
+        applicationId 'io.github.pxsort'
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
@@ -20,11 +20,17 @@ android {
     }
     productFlavors {
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'org.jetbrains:annotations:15.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile "com.android.support:recyclerview-v7:23.2.0"
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:percent:23.1.1'
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }

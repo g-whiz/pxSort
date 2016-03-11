@@ -1,16 +1,25 @@
 <resources>
+    <string name="app_name">pxSort</string>
+    <string name="description_filter_tile_mask">Mask to round thumbnail colours.</string>
+    <string name="load">load</string>
+    <string name="filters">filters</string>
+    <string name="snap">snap</string>
+    <string name="desc_load">Load an image from the Gallery.</string>
+    <string name="desc_filters">Open the filter manager.</string>
+    <string name="desc_snap">Take a picture.</string>
+    <string name="desc_logo">This application\'s logo.</string>
 
     <string name="sort_view_content_description">This ImageView contains a preview of the loaded image, sorted with the selected preset.</string>
 
-    <string name="app_name">PicSort</string>
+
     <string name="load_image">Load Image</string>
 
     <string name="hello_world">Hello world!</string>
 
     <string name="action_settings">Settings</string>
-    
-    <string name="description_preset_fragment_img">The thumbnail for this PresetFragment\'s Preset</string>
-    <string name="dummy_text_preset_fragment">&lt;PRESET&gt;</string>
+
+    <string name="description_filter_tile_thumb">The thumbnail for this PresetFragment\'s Preset</string>
+    <string name="dummy_text_filter_tile">&lt;PRESET&gt;</string>
 
     <!-- SortActivity menu item titles: -->
     <string name="action_start_sort">Start/Resume</string>
@@ -37,7 +46,7 @@
     <string name="from_predicate_title">From Pixel With:</string>
     <string name="to_predicate_title">To Pixel With:</string>
 
-    <string name="comparator" >Comparator:</string>
+    <string name="comparator">Comparator:</string>
     <string name="comparator_description">The comparator you select determines what attributes of
         each pixel will be used to decide ordering. The ordering chosen determines whether pixels are
         sorted in ascending or descending ordering.</string>
@@ -61,4 +70,9 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="dummy_number">000</string>
     <string name="action_commit_sort_settings">Accept</string>
+    <string name="sort_preview_description">Image view where the preview of a filter applied to an image is displayed.</string>
+    <string name="desc_save">Button for saving a sorted image.</string>
+    <string name="desc_filter_stack">Button for viewing/modifying the set of applied filters.</string>
+    <string name="desc_back">Button to g back to the main menu.</string>
+
 </resources>

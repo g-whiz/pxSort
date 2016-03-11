@@ -1,5 +1,29 @@
 <resources>
 
-    <color name="black_overlay">#66000000</color>
+    <color name="primary">#00adef</color>
+    <color name="primary_dark">#212121</color>
+    <color name="primary_light">#fff980</color>
+    <color name="accent">#ff40b3</color>
+    <color name="primary_text">#ffffff</color>
+    <color name="secondary_text">#446278</color>
+    <color name="icons">#80dbff</color>
+    <color name="divider">#80dbff</color>
+
+    <color name="cyan">#00adef</color>
+    <color name="cyan_light">#78cef0</color>
+    <color name="cyan_dark">#0077a6</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="magenta">#EC008C</color>
+    <color name="magenta_light">#ed77be</color>
+    <color name="magenta_dark">#a60063</color>
+
+    <color name="yellow">#FFF200</color>
+    <color name="yellow_light">#fff980</color>
+    <color name="yellow_dark">#bfb600</color>
+
+    <color name="black">#000000</color>
+    <color name="gray_light">#c2c2c2</color>
 
 </resources>
