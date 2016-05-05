@@ -7,6 +7,7 @@ import sqlite3
 import sys
 
 TABLE_FILTERS = "filters"
+
 COLUMN_NAME = "name"
 COLUMN_COMPONENT = "component"
 COLUMN_ORDERING = "ordering"
@@ -38,11 +39,13 @@ MOVE_VALUE = 7
 SORT = 0
 HEAPIFY = 1
 
-COMPONENTS = [RED, HUE, SATURATION]
-ORDERS = [ASCENDING, DESCENDING]
-ZIP_METHODS = [MOVE_PIXELS, MOVE_RED, MOVE_GREEN, MOVE_SATURATION, MOVE_HUE]
+BUILT_IN = 1
+
+COMPONENTS = [RED, HUE]
+ORDERS = [ASCENDING]
+ZIP_METHODS = [MOVE_PIXELS, MOVE_HUE]
 SORT_TYPES = [SORT, HEAPIFY]
-DIMENSIONS = [1, 4, 16]
+DIMENSIONS = [1, 8]
 
 
 def named_values(values):
@@ -76,7 +79,15 @@ def main(argv):
     cursor.execute(sql_db_create)
 
     for values in map(named_values,
-                      itertools.product(COMPONENTS, ORDERS, ZIP_METHODS, SORT_TYPES, DIMENSIONS, DIMENSIONS, [1])):
+                      itertools.product(COMPONENTS,
+                                        ORDERS,
+                                        ZIP_METHODS,
+                                        SORT_TYPES,
+                                        DIMENSIONS,
+                                        DIMENSIONS,
+                                        [BUILT_IN])
+                      # All presets in the newly built db are built-ins.
+                      ):
         query = "INSERT INTO " + TABLE_FILTERS + " VALUES " + "{}".format(values)
         cursor.execute(query)
 

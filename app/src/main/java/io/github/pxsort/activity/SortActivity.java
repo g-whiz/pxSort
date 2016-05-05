@@ -4,19 +4,21 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import io.github.pxsort.R;
 import io.github.pxsort.filter.Filter;
-import io.github.pxsort.filter.FilterDB;
 import io.github.pxsort.sort.PixelSort;
+import io.github.pxsort.sort.filter.FilterDB;
 import io.github.pxsort.util.FilterAdapter;
 import io.github.pxsort.util.Media;
 
@@ -143,6 +145,7 @@ public class SortActivity extends AppCompatActivity
 
     private void onUpdatePreview() {
         if (scaledSrc == null) {
+            Log.w(TAG, "Update Preview: No source image to draw.");
             return;
         }
         if (currentFilter == null) {
@@ -161,14 +164,18 @@ public class SortActivity extends AppCompatActivity
                     new PixelSort.OnFilterAppliedListener() {
                         @Override
                         public void onFilterApplied(Bitmap bitmap) {
-                            Bitmap oldBitmap =
-                                    ((BitmapDrawable) previewView.getDrawable()).getBitmap();
+                            Drawable previewDrawable = previewView.getDrawable();
+                            Bitmap oldBitmap = null;
+
+                            if (previewDrawable instanceof BitmapDrawable) {
+                                oldBitmap = ((BitmapDrawable) previewDrawable).getBitmap();
+                            }
 
                             previewView.setImageBitmap(bitmap);
                             alertDialog.dismiss();
 
                             //Recycle old bitmap if unneeded
-                            if (oldBitmap != scaledSrc) {
+                            if (oldBitmap != null && oldBitmap != scaledSrc) {
                                 oldBitmap.recycle();
                             }
                         }

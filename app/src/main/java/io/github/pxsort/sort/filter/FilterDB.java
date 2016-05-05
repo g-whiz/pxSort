@@ -1,4 +1,4 @@
-package io.github.pxsort.filter;
+package io.github.pxsort.sort.filter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -42,15 +42,15 @@ public class FilterDB {
 //        return getAllFilters();
 //    }
 
-    public List<Filter> getAllFilters() {
-        List<Filter> filtersList = new ArrayList<>();
+    public List<io.github.pxsort.filter.Filter> getAllFilters() {
+        List<io.github.pxsort.filter.Filter> filtersList = new ArrayList<>();
 
         Cursor filtersCursor = filterDB.query(FilterDBOpenHelper.TABLE_FILTERS, null, null, null,
                 null, null, FilterDBOpenHelper.COLUMN_NAME);
         filtersCursor.moveToFirst();
 
         while (!filtersCursor.isAfterLast()) {
-            Filter filter = cursorToFilter(filtersCursor);
+            io.github.pxsort.filter.Filter filter = cursorToFilter(filtersCursor);
             filtersList.add(filter);
             filtersCursor.moveToNext();
         }
@@ -58,8 +58,8 @@ public class FilterDB {
         return filtersList;
     }
 
-    private Filter cursorToFilter(Cursor cursor) {
-        return new Filter(cursor.getString(0), cursor.getInt(1), cursor.getInt(2),
+    private io.github.pxsort.filter.Filter cursorToFilter(Cursor cursor) {
+        return new io.github.pxsort.filter.Filter(cursor.getString(0), cursor.getInt(1), cursor.getInt(2),
                 cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6),
                 cursor.getInt(7) != 0);
     }

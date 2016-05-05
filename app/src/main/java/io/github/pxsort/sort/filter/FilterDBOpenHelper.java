@@ -1,4 +1,4 @@
-package io.github.pxsort.filter;
+package io.github.pxsort.sort.filter;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,7 +17,10 @@ import java.io.OutputStream;
 
 /**
  * Helper class for opening the Filter database.
- * <p/>
+ *
+ * A read-only database containing the app's built-in filters, included in the app's assets, is
+ * copied into the app's local data directory if no preexisting filter database is detected.
+ *
  * Created by George on 2016-01-25.
  */
 public class FilterDBOpenHelper extends SQLiteOpenHelper {
@@ -28,8 +31,8 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_COMPONENT = "component";
     public static final String COLUMN_ORDERING = "ordering";
-    public static final String COLUMN_ZIP_METHOD = "zip_method";
-    public static final String COLUMN_BASE_OP = "base_op";
+    public static final String COLUMN_COMBINATION = "combination";
+    public static final String COLUMN_ALGORITHM = "algorithm";
     public static final String COLUMN_NUM_ROWS = "num_rows";
     public static final String COLUMN_NUM_COLS = "num_cols";
     public static final String COLUMN_IS_DEFAULT = "is_default";
@@ -44,8 +47,8 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
             + "(" + COLUMN_NAME + " TEXT PRIMARY KEY NOT NULL,"
             + COLUMN_COMPONENT + " INTEGER NOT NULL,"
             + COLUMN_ORDERING + " INTEGER NOT NULL,"
-            + COLUMN_ZIP_METHOD + " INTEGER NOT NULL,"
-            + COLUMN_BASE_OP + " INTEGER NOT NULL,"
+            + COLUMN_COMBINATION + " INTEGER NOT NULL,"
+            + COLUMN_ALGORITHM + " INTEGER NOT NULL,"
             + COLUMN_NUM_ROWS + " INTEGER NOT NULL,"
             + COLUMN_NUM_COLS + " INTEGER NOT NULL,"
             + COLUMN_IS_DEFAULT + " INTEGER NOT NULL);";
@@ -96,8 +99,8 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
             values.put(COLUMN_NAME, defaultFilters.getString(0));
             values.put(COLUMN_COMPONENT, defaultFilters.getInt(1));
             values.put(COLUMN_ORDERING, defaultFilters.getInt(2));
-            values.put(COLUMN_ZIP_METHOD, defaultFilters.getInt(3));
-            values.put(COLUMN_BASE_OP, defaultFilters.getInt(4));
+            values.put(COLUMN_COMBINATION, defaultFilters.getInt(3));
+            values.put(COLUMN_ALGORITHM, defaultFilters.getInt(4));
             values.put(COLUMN_NUM_ROWS, defaultFilters.getInt(5));
             values.put(COLUMN_NUM_COLS, defaultFilters.getInt(6));
             values.put(COLUMN_IS_DEFAULT, defaultFilters.getInt(7));

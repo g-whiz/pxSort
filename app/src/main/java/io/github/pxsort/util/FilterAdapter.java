@@ -30,7 +30,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
     private boolean[] isSelected;
     int numSelected;
 
-    private List<Filter> filters;
+    private List<Filter> filterList;
 
     private Bitmap thumbnailSrc;
     private boolean hasThumbnail;
@@ -70,24 +70,24 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
     }
 
 
-    public FilterAdapter(List<Filter> filters, OnFilterSelectionListener listener) {
-        this(filters, null, listener);
+    public FilterAdapter(List<Filter> filterList, OnFilterSelectionListener listener) {
+        this(filterList, null, listener);
     }
 
 
     /**
-     * @param filters
+     * @param filterList
      * @param thumbnailSrc
      */
-    public FilterAdapter(List<Filter> filters, Bitmap thumbnailSrc,
+    public FilterAdapter(List<Filter> filterList, Bitmap thumbnailSrc,
                          OnFilterSelectionListener listener) {
-        this.filters = filters;
+        this.filterList = filterList;
         this.thumbnailSrc = thumbnailSrc;
         this.listener = listener;
         numSelected = 0;
 
         //boolean arrays init to all false
-        isSelected = new boolean[filters.size()];
+        isSelected = new boolean[filterList.size()];
 
         hasThumbnail = thumbnailSrc != null;
         thumbnailSrcIsScaled = false;
@@ -102,7 +102,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
     @Override
     public void onBindViewHolder(final FilterTileViewHolder holder, final int position) {
-        Filter filter = filters.get(position);
+        Filter filter = filterList.get(position);
 
         //dynamically color each view
         int foregroundColor = getForegroundColor(holder.itemView.getContext(), position);
@@ -154,7 +154,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
                 isSelected[position] = !(isSelected[position]);
                 //Change the background color of the view when it is selected/deselected
                 v.setBackgroundColor(isSelected[position] ? backgroundColor : Color.TRANSPARENT);
-                listener.onFilterSelection(isSelected[position], filters.get(position));
+                listener.onFilterSelection(isSelected[position], filterList.get(position));
             }
         });
     }
@@ -185,7 +185,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
     @Override
     public int getItemCount() {
-        return filters.size();
+        return filterList.size();
     }
 
     private int getForegroundColor(Context c, int position) {

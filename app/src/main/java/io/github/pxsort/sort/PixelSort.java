@@ -50,20 +50,25 @@ public class PixelSort {
      * @param f      The filter to apply to bitmap.
      */
     public static void applyFilter(Bitmap bitmap, Filter f) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
+        int bmpWidth = bitmap.getWidth();
+        int bmpHeight = bitmap.getHeight();
 
         //Sort individual grid positions
-        for (int row = 0; row < f.getNumRows(height); row++)
-            for (int column = 0; column < f.getNumCols(width); column++) {
+        for (int row = 0; row < f.getNumRows(bmpHeight); row++)
+            for (int column = 0; column < f.getNumCols(bmpWidth); column++) {
 
-                int[] dimensions = getGridPositionDimensions(row, column, width,
-                        height, f);
+                int[] dimensions = getGridPositionDimensions(row, column, bmpWidth,
+                        bmpHeight, f);
                 int gridWidth = dimensions[2];
                 int gridHeight = dimensions[3];
                 int[] pixels = new int[gridWidth * gridHeight];
-                bitmap.getPixels(pixels, 0, width, dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
+
+                int x = dimensions[0];
+                int y = dimensions[1];
+                int width = dimensions[2];
+                int height = dimensions[3];
+                bitmap.getPixels(pixels, 0, width, x, y,
+                        width, height);
 
                 switch (f.getBaseOp()) {
                     case SORT:
@@ -77,8 +82,7 @@ public class PixelSort {
                         break;
                 }
 
-                bitmap.setPixels(pixels, 0, bitmap.getWidth(), dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
+                bitmap.setPixels(pixels, 0, width, x, y, width, height);
             }
     }
 
@@ -209,7 +213,7 @@ public class PixelSort {
 
             int largest = index;
 
-            if (leftIndex < heap.length) {
+            if (rightIndex < heap.length) {
                 switch (order) {
                     case DESCENDING:
                         if (getComponent(heap[leftIndex], component)
@@ -490,16 +494,21 @@ public class PixelSort {
     public static final int MOVE_VALUE = 7;
 
 
-    /* ***** BASE OPERATION CONSTANTS ***** */
+    /* ***** ALGORITHM CONSTANTS ***** */
 
     /**
-     * BASE OPERATION CONSTANT: Sort the pixels.
+     * ALGORITHM CONSTANT: Sort the pixels.
      */
     public static final int SORT = 0;
 
     /**
-     * BASE OPERATION CONSTANT: Heapify the pixels.
+     * ALGORITHM CONSTANT: Heapify the pixels.
      */
     public static final int HEAPIFY = 1;
+
+    /**
+     * ALGORITHM CONSTANT: Do a top-down bst traversal of the pixels.
+     */
+    public static final int BST = 2;
 
 }
