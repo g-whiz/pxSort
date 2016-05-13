@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import io.github.pxsort.R;
-import io.github.pxsort.util.Media;
+import io.github.pxsort.util.OldMedia;
 
 /**
  * Activity for the main menu.
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * Create a file Uri for saving an image or video
      */
     private Uri getOutputImgFileUri() {
-        return Uri.fromFile(Media.getNewImageFile(this));
+        return Uri.fromFile(OldMedia.getNewImageFile(this));
     }
 
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     fileUri = data.getData();
 
                 case TAKE_PICTURE:
-                    Media.addImageToGallery(this, fileUri);
+                    OldMedia.addImageToGallery(this, fileUri);
             }
 
             Intent sortIntent = new Intent(this, SortActivity.class);

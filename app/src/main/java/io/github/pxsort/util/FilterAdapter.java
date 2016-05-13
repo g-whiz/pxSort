@@ -15,7 +15,7 @@ import java.util.List;
 
 import io.github.pxsort.R;
 import io.github.pxsort.filter.Filter;
-import io.github.pxsort.sort.PixelSort;
+import io.github.pxsort.sorting.PixelSort;
 
 /**
  * Adapter subclass for SortActivity UI

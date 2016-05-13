@@ -1,4 +1,4 @@
-package io.github.pxsort.sort;
+package io.github.pxsort.sorting;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -146,12 +146,6 @@ public class PixelSort {
         }
 
 
-        /**
-         *
-         * @param histogram
-         * @param order
-         * @return
-         */
         private static int[] generateBuckets(int[] histogram, int order) {
             int[] buckets = new int[histogram.length];
             buckets[0] = 0;

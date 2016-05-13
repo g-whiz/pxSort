@@ -1,5 +1,6 @@
 package io.github.pxsort.util;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,23 +23,25 @@ import java.util.Locale;
 
 import io.github.pxsort.R;
 
-/** A class containing static methods for IO operations.
- *
+/**
+ * A class containing static methods for IO operations.
+ * <p/>
  * Created by George on 2016-01-16.
  */
-public abstract class Media {
+public class OldMedia {
 
-    public static final String TAG = Media.class.getSimpleName();
+    public static final String TAG = OldMedia.class.getSimpleName();
     private static final String FILE_NAME_SUFFIX = ".png";
 
     /**
      * Saves a Bitmap to external storage
+     *
      * @param c
      * @param bitmap
      * @param listener
      */
-    public static void saveImage(final Context c, final Bitmap bitmap,
-                                 final OnImageSavedListener listener) {
+    public static void saveImageAsync(final Context c, final Bitmap bitmap,
+                                      final OnImageSavedListener listener) {
 
         // Save bitmap using an AsyncTask
         new AsyncTask<Void, Void, Boolean>() {
@@ -72,7 +75,6 @@ public abstract class Media {
         void onError();
     }
 
-
     private static boolean saveImage(Context c, Bitmap bitmap) {
         String appName = c.getString(R.string.app_name);
 
@@ -89,10 +91,9 @@ public abstract class Media {
         String imgName = appName.toUpperCase() + "_" + getDateTimeString() + FILE_NAME_SUFFIX;
         File imgFile = new File(albumDir, imgName);
 
-        // write the bitmap to the newly created file
         FileOutputStream fOut;
         try {
-            if (! imgFile.createNewFile()) {
+            if (!imgFile.createNewFile()) {
                 Log.e(TAG, "File " + imgName + "could not be created. Image was not saved.");
                 return false;
             }
@@ -161,16 +162,72 @@ public abstract class Media {
 
 
     /**
-     * Loads the image located within stream into a Bitmap scaled down as much as possible while
-     * still meeting the provided dimensional requirements.
+     * Loads a Bitmap from Uri in the background.
      *
-     * @param stream the stream to read the image from
+     * @param contentResolver
+     * @param imageUri        URI of the location of the source image.
+     * @param listener        The OnImageLoadedListener to return the loaded Bitmap or thrown exception to.
+     * @return
      */
-    public static Bitmap loadImage(InputStream stream) {
+    public static void loadImageAsync(final ContentResolver contentResolver, final Uri imageUri,
+                                      final OnImageLoadedListener listener) {
+
+        // Load bitmap using an AsyncTask
+
+        new AsyncTask<Void, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                return loadImage(contentResolver, imageUri);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null) {
+                    listener.onError();
+                } else {
+                    listener.onImageLoaded(bitmap);
+                }
+            }
+
+        }.execute();
+
+    }
+
+    private static Bitmap loadImage(ContentResolver contentResolver, Uri imageUri) {
+        Bitmap bitmap;
+
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inMutable = true;
 
-        return BitmapFactory.decodeStream(stream, null, opts);
+        try {
+            InputStream is = contentResolver.openInputStream(imageUri);
+            bitmap = BitmapFactory.decodeStream(is, null, opts);
+        } catch (IOException e) {
+            Log.e(TAG, "An error occurred while loading the image from file." +
+                    " The image was not loaded.", e);
+            return null;
+        }
+
+        return bitmap;
+    }
+
+    /**
+     * Callback interface for asynchronous image loading.
+     * All methods are invoked on the UI thread.
+     */
+    public interface OnImageLoadedListener {
+        /**
+         * Called when an image has been successfully loaded into a Bitmap.
+         *
+         * @param bm The loaded Bitmap.
+         */
+        void onImageLoaded(Bitmap bm);
+
+        /**
+         * Called if an exception is thrown during loading.
+         */
+        void onError();
     }
 
 
@@ -178,16 +235,17 @@ public abstract class Media {
      * Loads the image located within stream into a Bitmap scaled down as much as possible while
      * still meeting the provided dimensional requirements.
      *
-     * @param stream    the stream to read the image from
-     * @param reqWidth  the required minimum width for the Bitmap
-     * @param reqHeight the required minimum calculateBSTHeight for the Bitmap
+     * @param stream
+     * @param reqwidth
+     * @param reqHeight
+     * @return
      */
-    public static Bitmap loadImage(InputStream stream, int reqWidth, int reqHeight) {
+    private static Bitmap loadImage(InputStream stream, int reqwidth, int reqHeight) {
         // First calculate the maximum inSampleSize for this bitmap.
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(stream, null, options);
-        int inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        int inSampleSize = calculateInSampleSize(options, reqwidth, reqHeight);
 
         // Decode the sampled bitmap
         options.inJustDecodeBounds = false;
@@ -197,7 +255,7 @@ public abstract class Media {
     }
 
 
-    private static int calculateInSampleSize(
+    public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw calculateBSTHeight and width of image
         final int height = options.outHeight;

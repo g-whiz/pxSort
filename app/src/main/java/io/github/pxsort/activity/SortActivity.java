@@ -17,10 +17,10 @@ import android.widget.Toast;
 
 import io.github.pxsort.R;
 import io.github.pxsort.filter.Filter;
-import io.github.pxsort.sort.PixelSort;
-import io.github.pxsort.sort.filter.FilterDB;
+import io.github.pxsort.sorting.PixelSort;
+import io.github.pxsort.sorting.filter.FilterDB;
 import io.github.pxsort.util.FilterAdapter;
-import io.github.pxsort.util.Media;
+import io.github.pxsort.util.OldMedia;
 
 /**
  * Activity for pixel sorting.
@@ -55,7 +55,7 @@ public class SortActivity extends AppCompatActivity
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
         mRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        adapter = new FilterAdapter(filterDB.getAllFilters(), this);
+        adapter = new FilterAdapter(filterDB.getFilters(), this);
         mRecyclerView.setAdapter(adapter);
 
         Uri fileUri = getIntent().getParcelableExtra(MainActivity.FILE_URI);
@@ -73,8 +73,8 @@ public class SortActivity extends AppCompatActivity
     }
 
     private void loadImageInBackground(Uri fileUri) {
-        Media.loadImageAsync(getContentResolver(), fileUri,
-                new Media.OnImageLoadedListener() {
+        OldMedia.loadImageAsync(getContentResolver(), fileUri,
+                new OldMedia.OnImageLoadedListener() {
                     @Override
                     public void onImageLoaded(Bitmap bm) {
                         Toast.makeText(SortActivity.this, "Image loaded!",
@@ -212,7 +212,7 @@ public class SortActivity extends AppCompatActivity
             public void onFilterApplied(Bitmap bitmap) {
                 Toast.makeText(SortActivity.this, "Filter applied! Saving.",
                         Toast.LENGTH_LONG).show();
-                Media.saveImageAsync(SortActivity.this, src, new Media.OnImageSavedListener() {
+                OldMedia.saveImageAsync(SortActivity.this, src, new OldMedia.OnImageSavedListener() {
                     @Override
                     public void onImageSaved() {
                         Toast.makeText(SortActivity.this, "Saved!",
