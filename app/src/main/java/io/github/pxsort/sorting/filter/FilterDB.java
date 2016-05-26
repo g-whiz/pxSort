@@ -42,7 +42,9 @@ public class FilterDB {
      */
     public void close() {
         filterDBOpenHelper.close();
+        filterDB.close();
     }
+
 
     /**
      * Adds filter to the Filter database.
@@ -55,6 +57,7 @@ public class FilterDB {
 
         return getFilters();
     }
+
 
     /**
      * Deletes filter from the Filter database.
@@ -86,6 +89,7 @@ public class FilterDB {
             filtersCursor.moveToNext();
         }
 
+        filtersCursor.close();
         return filtersList;
     }
 

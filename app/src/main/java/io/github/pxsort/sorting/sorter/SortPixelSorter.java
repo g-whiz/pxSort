@@ -9,38 +9,47 @@ import io.github.pxsort.sorting.filter.Filter;
  */
 class SortPixelSorter extends PixelSorter {
 
+    private static final String TAG = SortPixelSorter.class.getSimpleName();
+
     SortPixelSorter(Filter filter) {
         super(filter);
     }
 
     /*
-     * This is an implementation of counting sort.
+     * This is an implementation of an augmented counting sort.
      */
     @Override
     protected int[] pixelSort(int[] oldPixels) {
         int[] buckets =
                 generateBuckets(generateHistogram(oldPixels, filter.component), filter.order);
+
         int[] newPixels = new int[oldPixels.length];
 
-        for (int oldPx : oldPixels) {
-            int index = 0;
+        int oldPx;
+        int newPx;
+        int bucketIndex;
+        for (int i = 0; i < oldPixels.length; i++) {
+            oldPx = oldPixels[i];
+
             switch (filter.order) {
                 case Filter.ASCENDING:
-                    index = getComponent(oldPx, filter.component);
+                    bucketIndex = getComponent(oldPx, filter.component);
                     break;
 
                 case Filter.DESCENDING:
-                    index = buckets.length - (getComponent(oldPx, filter.component) + 1);
+                    bucketIndex = buckets.length - (getComponent(oldPx, filter.component) + 1);
                     break;
+
+                default:
+                    throw new IllegalStateException("Invalid order: " + filter.order);
             }
 
             // Get the new pixel
-            int newPx = newPixels[buckets[index]];
-            newPixels[buckets[index]] =
-                    combinePixels(oldPx, newPx);
+            newPx = oldPixels[buckets[bucketIndex]];
+            newPixels[i] = combinePixels(oldPx, newPx);
 
             //Increment the index of the bucket
-            buckets[index]++;
+            buckets[bucketIndex]++;
         }
 
         return newPixels;
@@ -64,10 +73,10 @@ class SortPixelSorter extends PixelSorter {
         for (int i = 0; i < histogram.length - 1; i++) {
             switch (order) {
                 case Filter.ASCENDING:
-                    buckets[i + 1] = histogram[i];
+                    buckets[i + 1] = buckets[i] + histogram[i];
                     break;
                 case Filter.DESCENDING:
-                    buckets[i + 1] = histogram[histogram.length - (i + 1)];
+                    buckets[i + 1] = buckets[i] + histogram[histogram.length - (i + 1)];
                     break;
             }
         }

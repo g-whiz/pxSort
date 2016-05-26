@@ -7,10 +7,9 @@ android {
     buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId 'io.github.pxsort'
-        minSdkVersion 21
-        targetSdkVersion 21
+        minSdkVersion 16
         versionCode 1
-        versionName "0.01"
+        versionName "0.03"
     }
     buildTypes {
         release {
@@ -28,9 +27,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile "com.android.support:recyclerview-v7:23.2.0"
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.android.support:percent:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:percent:23.2.0'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }

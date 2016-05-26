@@ -5,27 +5,27 @@
     android:layout_height="wrap_content">
 
     <FrameLayout
-        android:layout_margin="3dp"
+        android:layout_marginTop="9dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/thumb_border"
+            android:background="@color/secondary_dark"
+            android:contentDescription="@string/description_thumb_border"
+            android:layout_width="@dimen/filter_tile_border_height"
+            android:layout_height="@dimen/filter_tile_border_height"
+            android:layout_gravity="center" />
 
         <ImageView
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/filter_thumb"
+            android:layout_gravity="center"
+            android:id="@+id/thumb"
+            android:src="@color/primary_dark"
             android:layout_width="@dimen/filter_tile_image_height"
             android:layout_height="@dimen/filter_tile_image_height"
-            android:padding="6dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:contentDescription="@string/description_filter_tile_thumb"
             style="@style/AppTheme" />
-
-        <ImageView
-            android:id="@+id/filter_thumb_mask"
-            android:src="@drawable/filter_thumb_mask"
-            android:contentDescription="@string/description_filter_tile_mask"
-            android:layout_width="@dimen/filter_tile_image_height"
-            android:layout_height="@dimen/filter_tile_image_height"
-            android:layout_gravity="center_horizontal" />
 
     </FrameLayout>
 

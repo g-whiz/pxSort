@@ -8,15 +8,43 @@ import io.github.pxsort.sorting.partition.Partition;
 
 /**
  * Abstract data type for pixel sorting Bitmaps.
+ *
+ * The methods in this class are not threadsafe.
  * <p/>
  * Created by George on 2016-05-04.
  */
 public abstract class PixelSorter {
 
+    private static final String TAG = PixelSorter.class.getSimpleName();
+    /**
+     * This PixelSorter's Filter
+     */
     protected final Filter filter;
+
+    // Arrays used to store temporary values when executing the getComponent and combinePixel
+    // helper methods. Since the methods are executed potentially millions of times per Bitmap,
+    // allocating new arrays on each invocation can cause performance issues.
+    private int[] components;
+    private float[] hsv;
+
+    private int[] oldComponents;
+    private int[] newComponents;
+
+    private int[] combineFuncs;
 
     protected PixelSorter(Filter filter) {
         this.filter = filter;
+        this.components = new int[4];
+        this.oldComponents = new int[4];
+        this.newComponents = new int[4];
+        this.hsv = new float[3];
+
+        this.combineFuncs = new int[]{
+                filter.combineFunc1,
+                filter.combineFunc2,
+                filter.combineFunc3,
+                filter.combineFunc4
+        };
     }
 
     public void applyTo(Bitmap bitmap) {
@@ -47,14 +75,8 @@ public abstract class PixelSorter {
      * @return the pixel resulting from the combination.
      */
     protected int combinePixels(int oldPixel, int newPixel) {
-        int[] combineFuncs = new int[]{
-                filter.combineFunc1,
-                filter.combineFunc2,
-                filter.combineFunc3,
-                filter.combineFunc4
-        };
-        int[] oldComponents = pixelToComponents(filter.combineType, oldPixel);
-        int[] newComponents = pixelToComponents(filter.combineType, newPixel);
+        extractComponents(filter.combineType, oldPixel, oldComponents);
+        extractComponents(filter.combineType, newPixel, newComponents);
 
         for (int i = 0; i < 4; i++) {
             newComponents[i] =
@@ -80,13 +102,13 @@ public abstract class PixelSorter {
                 return Color.blue(pixel);
 
             case Filter.CMPNT_HUE:
-                return pixelToComponents(Filter.COMBINE_AHSV, pixel)[1];
+                return extractComponents(Filter.COMBINE_AHSV, pixel, components)[1];
 
             case Filter.CMPNT_SAT:
-                return pixelToComponents(Filter.COMBINE_AHSV, pixel)[2];
+                return extractComponents(Filter.COMBINE_AHSV, pixel, components)[2];
 
             case Filter.CMPNT_VAL:
-                return pixelToComponents(Filter.COMBINE_AHSV, pixel)[3];
+                return extractComponents(Filter.COMBINE_AHSV, pixel, components)[3];
 
             default:
                 throw new IllegalStateException(
@@ -120,8 +142,8 @@ public abstract class PixelSorter {
         }
     }
 
-    private int[] pixelToComponents(int combineType, int pixel) {
-        int[] components = new int[4];
+
+    private int[] extractComponents(int combineType, int pixel, int[] components) {
         components[0] = Color.alpha(pixel);
 
         if (combineType == Filter.COMBINE_ARGB) {
@@ -130,7 +152,6 @@ public abstract class PixelSorter {
             components[3] = Color.blue(pixel);
 
         } else if (combineType == Filter.COMBINE_AHSV) {
-            float[] hsv = new float[3];
             Color.colorToHSV(pixel, hsv);
 
             components[1] = (int) (hsv[0] * 255f / 360f);
@@ -141,27 +162,25 @@ public abstract class PixelSorter {
                     "Unknown combineType in this PixelSorter's Filter: " + combineType);
         }
 
+        // return components for convenience
         return components;
     }
 
 
     private int componentsToPixel(int combineType, int[] components) {
-        int alpha = components[0];
-
         if (combineType == Filter.COMBINE_ARGB) {
-            int red = components[1];
-            int green = components[2];
-            int blue = components[3];
-
-            return Color.argb(alpha, red, green, blue);
+            return Color.argb(
+                    components[0],
+                    components[1],
+                    components[2],
+                    components[3]);
 
         } else if (combineType == Filter.COMBINE_AHSV) {
-            float[] hsv = new float[3];
             hsv[0] = ((float) components[1]) * 360f / 255f;
             hsv[1] = ((float) components[2]) / 255f;
             hsv[2] = ((float) components[3]) / 255f;
 
-            return Color.HSVToColor(alpha, hsv);
+            return Color.HSVToColor(components[0], hsv);
 
         } else {
             throw new IllegalStateException(

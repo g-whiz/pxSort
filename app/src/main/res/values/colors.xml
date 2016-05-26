@@ -2,6 +2,7 @@
 
     <color name="primary">#00adef</color>
     <color name="primary_dark">#212121</color>
+    <color name="secondary_dark">#515151</color>
     <color name="primary_light">#fff980</color>
     <color name="accent">#ff40b3</color>
     <color name="primary_text">#ffffff</color>

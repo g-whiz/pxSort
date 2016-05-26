@@ -9,6 +9,8 @@ import io.github.pxsort.sorting.filter.Filter;
  */
 class BSTPixelSorter extends SortPixelSorter {
 
+    private static final String TAG = BSTPixelSorter.class.getSimpleName();
+
     BSTPixelSorter(Filter filter) {
         super(filter);
     }
@@ -28,9 +30,10 @@ class BSTPixelSorter extends SortPixelSorter {
 
         int idx = 0;
         for (int h = height; h >= 0; h--)
-            for (int c = 1; c * (2 ^ h) < sortedPixels.length; c += 2) {
+            for (int c = 1; c * (1 << h) - 1 < sortedPixels.length; c += 2) {
+
                 int oldPx = sortedPixels[idx];
-                int newPx = sortedPixels[c * (2 ^ h)];
+                int newPx = sortedPixels[c * (1 << h) - 1];
                 traversal[idx] = combinePixels(oldPx, newPx);
                 idx++;
             }

@@ -3,21 +3,20 @@ package io.github.pxsort.sorting;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.BlockingQueue;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import io.github.pxsort.sorting.filter.Filter;
 import io.github.pxsort.sorting.sorter.PixelSorter;
-import io.github.pxsort.util.Media;
+import io.github.pxsort.util.MediaUtils;
 
 /**
  * Interface for asynchronously running pixel sorting operations on some image.
@@ -25,127 +24,114 @@ import io.github.pxsort.util.Media;
  * Created by George on 2016-05-04.
  */
 public class PixelSortingContext {
-    // TODO: 2016-05-04 This class is responsible for:
-    //                  - Loading scaled versions of the image at the provided URI/File/?
-    //                  - Sorting the image at the provided URI/File/?
-    //                  - Saving sorted versions of the image  at the provided URI/File/?
-    //                  NOTE: The actual loading and saving should be done in a refactored version of util.Media
-    //                          - One method to load scaled versions of the provided image
-    //                          - One method to save sorted versions of the provided image (and add them to the gallery)
+
+    /**
+     * No requirements on this dimension.
+     */
+    private static final int NO_REQ = Integer.MAX_VALUE;
+
+    private static final Executor EXECUTOR = AsyncTask.THREAD_POOL_EXECUTOR;
+
+    private static final String TAG = PixelSortingContext.class.getSimpleName();
+
+    private final Map<Integer, Bitmap> bitmapMap;
 
     private final ContentResolver contentResolver;
     private final Uri imageUri;
 
-    private Executor executor;
+    private final int imageWidth;
+    private final int imageHeight;
 
     /**
      * @param context
      * @param imageUri
      * @throws FileNotFoundException if the Uri provided points to a nonexistent file
      */
-    public PixelSortingContext(Context context, Uri imageUri) throws FileNotFoundException {
+    public PixelSortingContext(Context context, Uri imageUri) throws IOException {
+        bitmapMap = new ConcurrentHashMap<>();
         contentResolver = context.getApplicationContext().getContentResolver();
         this.imageUri = imageUri;
 
-        int threads = Runtime.getRuntime().availableProcessors();
-        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-        executor = new ThreadPoolExecutor(threads, threads, 30, TimeUnit.SECONDS, queue);
+        BitmapFactory.Options opts = MediaUtils.decodeBounds(contentResolver, imageUri);
+        imageWidth = opts.outWidth;
+        imageHeight = opts.outHeight;
     }
 
 
-    public void getPixelSortedImage(
+    /**
+     * Loads this PixelSortingContext's image, pixel sorts it, then returns it via the provided
+     * listener.
+     *
+     * @param filter    The Filter to pixel sort the image with
+     * @param reqWidth  the required width of the Bitmap
+     * @param reqHeight the required width of the Bitmap
+     * @param listener  the listener to return the bitmap through
+     * @return An AsyncTask that can be used to cancel the operation if the bitmap is no
+     * longer needed.
+     * @throws FileNotFoundException
+     */
+    public BitmapWorkerTask getPixelSortedImage(
             final Filter filter, final int reqWidth, final int reqHeight,
-            final OnImageReadyListener listener) throws FileNotFoundException {
-        final InputStream stream = contentResolver.openInputStream(imageUri);
-
-        new AsyncTask<Void, Void, Bitmap>() {
+            final OnImageReadyListener listener) {
+        return (BitmapWorkerTask) new BitmapWorkerTask() {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap = Media.loadImage(stream, reqWidth, reqHeight);
-                PixelSorter.from(filter).applyTo(bitmap);
+
+                Bitmap mutableSrc = null;
                 try {
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
+                    mutableSrc = retrieveOriginalImage(reqWidth, reqHeight, true);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error while retrieving Bitmap: ", e);
+                    cancel(false);
+                    return null;
                 }
 
-                return bitmap;
+                // Scale down the bitmap as much as possible to maximize sort performance.
+                Bitmap scaledMutSrc = scaleDownBitmap(mutableSrc, reqWidth, reqHeight);
+                if (mutableSrc != scaledMutSrc) {
+                    mutableSrc.recycle();
+                }
+                PixelSorter.from(filter).applyTo(scaledMutSrc);
+
+                return scaledMutSrc;
             }
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(bitmap);
+                listener.onImageReady(true, bitmap);
             }
 
             @Override
             protected void onCancelled(Bitmap bitmap) {
-                try {
-                    if (bitmap != null)
-                        bitmap.recycle();
+                if (bitmap != null)
+                    bitmap.recycle();
 
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
-                }
+                listener.onImageReady(false, null);
             }
-        }.executeOnExecutor(executor);
+        }.executeOnExecutor(EXECUTOR);
     }
 
 
-    public void getPixelSortedImage(final Filter filter, final OnImageReadyListener listener)
-            throws FileNotFoundException {
-        final InputStream stream = contentResolver.openInputStream(imageUri);
-
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap = Media.loadImage(stream);
-                PixelSorter.from(filter).applyTo(bitmap);
-                try {
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
-                }
-
-                return bitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(bitmap);
-            }
-
-            @Override
-            protected void onCancelled(Bitmap bitmap) {
-                try {
-                    if (bitmap != null)
-                        bitmap.recycle();
-
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }.executeOnExecutor(executor);
+    public AsyncTask<Void, Void, Bitmap> getPixelSortedImage(
+            final Filter filter, final OnImageReadyListener listener) {
+        return getPixelSortedImage(filter, NO_REQ, NO_REQ, listener);
     }
 
 
-    public void getOriginalImage(
-            final int reqWidth, final int reqHeight, final OnImageReadyListener listener)
-            throws FileNotFoundException {
-        final InputStream stream = contentResolver.openInputStream(imageUri);
-
-        new AsyncTask<Void, Void, Bitmap>() {
+    public BitmapWorkerTask getOriginalImage(
+            final int reqWidth, final int reqHeight, final OnImageReadyListener listener) {
+        return (BitmapWorkerTask) new BitmapWorkerTask() {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap = Media.loadImage(stream, reqWidth, reqHeight);
+                Bitmap bitmap = null;
                 try {
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
+                    bitmap = retrieveOriginalImage(reqWidth, reqHeight, true);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error while retrieving Bitmap: ", e);
+                    cancel(false);
+                    return null;
                 }
 
                 return bitmap;
@@ -153,73 +139,144 @@ public class PixelSortingContext {
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(bitmap);
+                listener.onImageReady(true, bitmap);
             }
 
             @Override
             protected void onCancelled(Bitmap bitmap) {
-                try {
-                    if (bitmap != null)
-                        bitmap.recycle();
-
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
+                if (bitmap != null) {
+                    bitmap.recycle();
                 }
+
+                listener.onImageReady(false, null);
             }
-        }.executeOnExecutor(executor);
+        }.executeOnExecutor(EXECUTOR);
     }
 
 
-    public void getOriginalImage(final OnImageReadyListener listener) throws FileNotFoundException {
-        final InputStream stream = contentResolver.openInputStream(imageUri);
-
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap = Media.loadImage(stream);
-                try {
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
-                }
-
-                return bitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(bitmap);
-            }
-
-            @Override
-            protected void onCancelled(Bitmap bitmap) {
-                try {
-                    if (bitmap != null)
-                        bitmap.recycle();
-
-                    if (stream != null)
-                        stream.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }.executeOnExecutor(executor);
+    public AsyncTask<Void, Void, Bitmap> getOriginalImage(final OnImageReadyListener listener) {
+        return getOriginalImage(NO_REQ, NO_REQ, listener);
     }
 
 
     /**
      * Saves the full-resolution pixel-sorted image to file.
-     *
-     * @param closeOnCompletion close any open Streams once the pixel-sorted image has been saved.
      */
-    public void savePixelSortedImage(boolean closeOnCompletion) {
+    public void savePixelSortedImage(
+            final Context context, final Filter filter, final OnImageSavedListener listener) {
+        new AsyncTask<Void, Void, Void>() {
 
+            @Override
+            protected Void doInBackground(Void... params) {
+                Bitmap bitmap;
+                try {
+                    bitmap = MediaUtils.loadImage(contentResolver, imageUri, 1, true);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error while loading Bitmap to save: ", e);
+                    cancel(false);
+                    return null;
+                }
+
+                PixelSorter.from(filter).applyTo(bitmap);
+                MediaUtils.saveImage(context, bitmap);
+
+                bitmap.recycle();
+                return null;
+            }
+
+            @Override
+            protected void onCancelled(Void aVoid) {
+                listener.onImageSaved(false);
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                listener.onImageSaved(true);
+            }
+        }.executeOnExecutor(EXECUTOR);
     }
 
 
-    private InputStream getStream() throws IOException {
-        return contentResolver.openInputStream(imageUri);
+    private Bitmap retrieveOriginalImage(int reqWidth, int reqHeight, boolean isMutable)
+            throws IOException {
+        int inSampleSize = calculateInSampleSize(reqWidth, reqHeight);
+
+        if (!bitmapMap.containsKey(inSampleSize)) {
+            // load the appropriate version of the bitmap into memory
+            Bitmap bitmap = MediaUtils.loadImage(contentResolver, imageUri, inSampleSize, false);
+            bitmapMap.put(inSampleSize, bitmap);
+        }
+
+        if (isMutable) {
+            return bitmapMap.get(inSampleSize).copy(Bitmap.Config.ARGB_8888, true);
+
+        } else {
+            return bitmapMap.get(inSampleSize);
+        }
+    }
+
+
+    private Bitmap scaleDownBitmap(Bitmap source, int reqWidth, int reqHeight) {
+        int sourceWidth = source.getWidth();
+        int sourceHeight = source.getHeight();
+
+        if (reqWidth >= sourceWidth || reqHeight >= sourceHeight) {
+            return source;
+        }
+
+        int dstWidth;
+        int dstHeight;
+
+        if (sourceWidth >= sourceHeight) {
+            dstHeight = reqHeight;
+            dstWidth = Math.round((float) sourceWidth
+                    / (float) sourceHeight * (float) reqWidth);
+        } else {
+            dstHeight = Math.round((float) sourceHeight
+                    / (float) sourceWidth * (float) reqHeight);
+            dstWidth = reqWidth;
+        }
+
+        return Bitmap.createScaledBitmap(source, dstWidth, dstHeight, false);
+    }
+
+
+    // Sourced from https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+    private int calculateInSampleSize(int reqWidth, int reqHeight) {
+        int inSampleSize = 1;
+
+        if (imageHeight > reqHeight || imageWidth > reqWidth) {
+
+            final int halfHeight = imageHeight / 2;
+            final int halfWidth = imageWidth / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // calculateBSTHeight and width larger than the requested calculateBSTHeight and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+
+    /**
+     * Recycle any bitmaps stored in this PixelSortingContext
+     */
+    public void recycle() {
+        for (Bitmap bitmap : bitmapMap.values()) {
+            bitmap.recycle();
+        }
+        bitmapMap.clear();
+    }
+
+
+    /**
+     * AsyncTask renamed for convenience/clarity.
+     */
+    public abstract class BitmapWorkerTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
 
@@ -231,8 +288,20 @@ public class PixelSortingContext {
         /**
          * Called once the requested image is ready.
          *
-         * @param bitmap the Bitmap containing the image
+         * @param success true if loading the image was successful, false otherwise
+         * @param bitmap the Bitmap containing the image, undefined if success == false
          */
-        void onImageReady(Bitmap bitmap);
+        void onImageReady(boolean success, Bitmap bitmap);
+    }
+
+
+    public interface OnImageSavedListener {
+
+        /**
+         * Called once the pixel sorted image is saved.
+         *
+         * @param success true if saving was successful, false otherwise
+         */
+        void onImageSaved(boolean success);
     }
 }

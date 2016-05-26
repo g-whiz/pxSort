@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import io.github.pxsort.R;
-import io.github.pxsort.util.OldMedia;
+import io.github.pxsort.util.MediaUtils;
 
 /**
  * Activity for the main menu.
@@ -20,12 +20,12 @@ import io.github.pxsort.util.OldMedia;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static final String FILE_URI = "file_uri";
+    public static final String IMAGE_URI = "file_uri";
 
     private static final int PICK_IMAGE = 1;
     private static final int TAKE_PICTURE = 2;
 
-    private Uri fileUri;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            fileUri = getOutputImgFileUri(); // create a file to save the image
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+            imageUri = getOutputImgFileUri(); // create a file to save the image
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // set the image file name
 
             // start the image capture Intent
             startActivityForResult(intent, TAKE_PICTURE);
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * Create a file Uri for saving an image or video
      */
     private Uri getOutputImgFileUri() {
-        return Uri.fromFile(OldMedia.getNewImageFile(this));
+        return Uri.fromFile(MediaUtils.createNewImageFile(this));
     }
 
 
@@ -80,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null) {
             switch (requestCode) {
                 case PICK_IMAGE:
-                    fileUri = data.getData();
+                    imageUri = data.getData();
 
                 case TAKE_PICTURE:
-                    OldMedia.addImageToGallery(this, fileUri);
+                    MediaUtils.addImageToGallery(this, imageUri);
             }
 
             Intent sortIntent = new Intent(this, SortActivity.class);
-            sortIntent.putExtra(FILE_URI, fileUri);
+            sortIntent.putExtra(IMAGE_URI, imageUri);
             startActivity(sortIntent);
         }
     }

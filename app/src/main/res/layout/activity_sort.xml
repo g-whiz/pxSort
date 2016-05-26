@@ -6,6 +6,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.SortActivity">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/cyan" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
@@ -44,13 +49,23 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/magenta" />
+
     <ImageView
         android:contentDescription="@string/sort_preview_description"
-        android:id="@+id/sort_preview_image_view"
+        android:id="@+id/sort_image_preview_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:src="@color/primary_dark" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/yellow" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/filter_tile_recycler_view"
@@ -58,5 +73,10 @@
         android:layout_height="wrap_content"
         android:scrollbars="horizontal"
         android:orientation="horizontal" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/cyan" />
 
 </LinearLayout>

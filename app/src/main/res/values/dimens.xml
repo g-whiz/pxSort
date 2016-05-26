@@ -4,5 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="filter_tile_image_height">60dp</dimen>
+    <dimen name="filter_tile_border_height">63dp</dimen>
 
 </resources>

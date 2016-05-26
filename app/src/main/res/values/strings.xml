@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">pxSort</string>
-    <string name="description_filter_tile_mask">Mask to round thumbnail colours.</string>
+
     <string name="load">load</string>
     <string name="filters">filters</string>
     <string name="snap">snap</string>
@@ -9,70 +9,14 @@
     <string name="desc_snap">Take a picture.</string>
     <string name="desc_logo">This application\'s logo.</string>
 
-    <string name="sort_view_content_description">This ImageView contains a preview of the loaded image, sorted with the selected preset.</string>
-
-
-    <string name="load_image">Load Image</string>
-
-    <string name="hello_world">Hello world!</string>
-
-    <string name="action_settings">Settings</string>
-
-    <string name="description_filter_tile_thumb">The thumbnail for this PresetFragment\'s Preset</string>
     <string name="dummy_text_filter_tile">&lt;PRESET&gt;</string>
 
-    <!-- SortActivity menu item titles: -->
-    <string name="action_start_sort">Start/Resume</string>
-    <string name="action_pause_sort">Pause</string>
-    <string name="action_save_image">Save Image</string>
-    <string name="action_apply_once">Apply Once</string>
-    <string name="action_sort_settings">Sort Settings</string>
-
-    <string name="sort_row">Row Sort</string>
-
-    <string name="sort_by">Sort Pixels By:</string>
-    <string name="direction">Direction:</string>
-    <string name="horizontal">Horizontal</string>
-    <string name="vertical">Vertical</string>
-
-    <string name="unnamed_preset">Unnamed Preset</string>
-    <string name="new_preset">New</string>
-    <string name="no_preset">None</string>
-
-    <string name="tune_sorter_button_description">A button to expand the Preset edit panel.</string>
-    <string name="cancel_edit_button_description">A button to cancel any changes to the active preset. Collapses the Preset edit panel.</string>
-    <string name="commit_edit_button_description">A button to commit any changes to the active preset. Collapses the Preset edit panel.</string>
-
-    <string name="from_predicate_title">From Pixel With:</string>
-    <string name="to_predicate_title">To Pixel With:</string>
-
-    <string name="comparator">Comparator:</string>
-    <string name="comparator_description">The comparator you select determines what attributes of
-        each pixel will be used to decide ordering. The ordering chosen determines whether pixels are
-        sorted in ascending or descending ordering.</string>
-    <string name="ordering">In:</string>
-    <string name="ascending">Ascending Order</string>
-    <string name="descending">Descending Order</string>
-
-    <string name="predicate">Predicate:</string>
-    <string name="predicate_description">The predicate you select determines the condition that
-        needs to be satisfied for a certain pixel to be selected.</string>
-
-    <string name="threshold">Threshold:</string>
-    <string name="lower_bound">Lower\nBound:</string>
-    <string name="upper_bound">Upper\nBound:</string>
-
-    <string name="above">Above:</string>
-    <string name="below">Below:</string>
-
-    <string name="title_activity_sort">SortActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="dummy_number">000</string>
-    <string name="action_commit_sort_settings">Accept</string>
     <string name="sort_preview_description">Image view where the preview of a filter applied to an image is displayed.</string>
+    <string name="description_thumb_border">Border for the thumbnail.</string>
     <string name="desc_save">Button for saving a sorted image.</string>
     <string name="desc_filter_stack">Button for viewing/modifying the set of applied filters.</string>
     <string name="desc_back">Button to g back to the main menu.</string>
+    <string name="description_filter_tile_thumb">Thumbnail holding a preview of the current image pixel sorted with this tile\'s FIlter.</string>
+
 
 </resources>

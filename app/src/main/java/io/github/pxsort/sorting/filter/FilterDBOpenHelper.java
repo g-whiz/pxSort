@@ -52,7 +52,7 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
     public static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_FILTERS + "("
                     + COL_NAME + " TEXT PRIMARY KEY NOT NULL,"
-                    + COL_IS_BUILT_IN + " INTEGER NOT NULL"
+                    + COL_IS_BUILT_IN + " INTEGER NOT NULL,"
 
                     + COL_ALGORITHM + " INTEGER NOT NULL,"
                     + COL_COMPONENT + " INTEGER NOT NULL,"
@@ -66,10 +66,8 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
 
                     + COL_PARTITION_TYPE + " INTEGER NOT NULL,"
                     + COL_NUM_ROWS + " INTEGER NOT NULL,"
-                    + COL_NUM_COLS + " INTEGER NOT NULL," +
+                    + COL_NUM_COLS + " INTEGER NOT NULL" +
                     ");";
-
-    private Context context;
 
     private List<Filter> defaultFilters;
 
@@ -88,7 +86,6 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE_CREATE);
         Log.d(TAG, "Filter database created.");
 
-        SQLiteDatabase defaultsDB;
         insertDefaults(db);
         Log.d(TAG, "Default filters copied from assets.");
     }

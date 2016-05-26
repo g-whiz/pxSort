@@ -1,12 +1,10 @@
 package io.github.pxsort.activity;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,217 +13,252 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.List;
+
 import io.github.pxsort.R;
-import io.github.pxsort.filter.Filter;
-import io.github.pxsort.sorting.PixelSort;
+import io.github.pxsort.sorting.PixelSortingContext;
+import io.github.pxsort.sorting.filter.Filter;
 import io.github.pxsort.sorting.filter.FilterDB;
 import io.github.pxsort.util.FilterAdapter;
-import io.github.pxsort.util.OldMedia;
 
 /**
  * Activity for pixel sorting.
  *
  * Created by George on 2016-02-16.
  */
-public class SortActivity extends AppCompatActivity
-        implements FilterAdapter.OnFilterSelectionListener {
+public class SortActivity extends AppCompatActivity implements
+        FilterAdapter.OnFilterSelectedListener,
+        PixelSortingContext.OnImageReadyListener,
+        PixelSortingContext.OnImageSavedListener {
 
-    private static final String MSG_SORTING = "Applying filter to image.";
-    private static final String TITLE_SORTING = "Please Wait";
+    //    private static final String MSG_SORTING = "Applying filter to image.";
+//    private static final String TITLE_SORTING = "Please Wait";
     private static final String TAG = SortActivity.class.getSimpleName();
 
-    private ImageView previewView;
 
-    private FilterDB filterDB;
-    private Filter currentFilter;
-    private FilterAdapter adapter;
+    // TODO: These should be in resources
+    private static final int COLOR_LOADING = 0x40000000;
+    private static final int COLOR_LOADED = 0x00000000;
 
-    private Bitmap src;
-    private Bitmap scaledSrc;
+    private ImageView imagePreviewView;
+
+    // TODO: this should be a setting
+    private static final int PREVIEW_SIZE = 500;
+
+    private Filter activeFilter;
+
+    private PixelSortingContext sortingContext;
+
+    // Reference used to cancel any running, unneeded task.
+    private WeakReference<PixelSortingContext.BitmapWorkerTask> previewLoaderTaskRef;
+
+    // true once onWindowFocusChanged has been called once
+    private boolean setupDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupDone = false;
+
+        activeFilter = null;
+        previewLoaderTaskRef = null;
+
         setContentView(R.layout.activity_sort);
-        previewView = (ImageView) findViewById(R.id.sort_preview_image_view);
+        imagePreviewView = (ImageView) findViewById(R.id.sort_image_preview_view);
 
-        filterDB = new FilterDB(this);
-        filterDB.open();
+        List<Filter> filters = null;
+        try {
+            initSortingContext();
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
-        mRecyclerView.setLayoutManager(
+            filters = getFiltersFromDB();
+        } catch (IOException e) {
+            NavUtils.navigateUpFromSameTask(this);
+            finish();
+        }
+
+        FilterAdapter adapter = new FilterAdapter(sortingContext, filters, this);
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
+        recyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        adapter = new FilterAdapter(filterDB.getFilters(), this);
-        mRecyclerView.setAdapter(adapter);
-
-        Uri fileUri = getIntent().getParcelableExtra(MainActivity.FILE_URI);
-        loadImageInBackground(fileUri);
+        recyclerView.setAdapter(adapter);
     }
+
+
+    private void initSortingContext() throws IOException {
+        Uri imageUri = getIntent().getParcelableExtra(MainActivity.IMAGE_URI);
+        try {
+            sortingContext = new PixelSortingContext(this, imageUri);
+        } catch (IOException e) {
+            Log.e(TAG, "Error: a problem occurred while initializing the " +
+                    "PixelSortingContext for this Activity", e);
+            throw e;
+        }
+    }
+
+
+    private List<Filter> getFiltersFromDB() throws IOException {
+        FilterDB filterDB;
+        try {
+            filterDB = new FilterDB(this);
+        } catch (IOException e) {
+            Log.e(TAG, "A fatal error occurred while accessing the Filter database.", e);
+            throw e;
+        }
+
+        filterDB.open();
+        List<Filter> filters = filterDB.getFilters();
+        filterDB.close();
+
+        return filters;
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus && src != null && scaledSrc == null) {
-            scaledSrc = scaleBitmap(src, previewView.getWidth(),
-                    previewView.getHeight());
-        }
-
         super.onWindowFocusChanged(hasFocus);
-    }
 
-    private void loadImageInBackground(Uri fileUri) {
-        OldMedia.loadImageAsync(getContentResolver(), fileUri,
-                new OldMedia.OnImageLoadedListener() {
-                    @Override
-                    public void onImageLoaded(Bitmap bm) {
-                        Toast.makeText(SortActivity.this, "Image loaded!",
-                                Toast.LENGTH_SHORT).show();
-                        src = bm;
-                        adapter.setThumbnailSrc(bm);
+        if (hasFocus && !setupDone) {
+            // redraw thumbnails now that they are measured
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
+            recyclerView.getAdapter().notifyDataSetChanged();
 
-                        //Scale bitmap if views have been measured
-                        if (hasWindowFocus()) {
-                            scaledSrc = scaleBitmap(bm, previewView.getWidth(),
-                                    previewView.getHeight());
-                            onUpdatePreview();
-                        }
-                    }
+            updatePreview();
 
-                    @Override
-                    public void onError() {
-                        Toast.makeText(SortActivity.this, "Something went wrong while loading!",
-                                Toast.LENGTH_SHORT).show();
-                        navigateToMainActivity();
-                    }
-                });
-    }
-
-    private Bitmap scaleBitmap(Bitmap src, int maxWidth, int maxHeight) {
-        int sourceWidth = src.getWidth();
-        int sourceHeight = src.getHeight();
-
-        int dstWidth;
-        int dstHeight;
-
-        if (sourceWidth >= sourceHeight) {
-            dstHeight = maxHeight;
-            dstWidth = Math.round((float) sourceWidth
-                    / (float) sourceHeight * (float) maxWidth);
-        } else {
-            dstHeight = Math.round((float) sourceHeight
-                    / (float) sourceWidth * (float) maxHeight);
-            dstWidth = maxWidth;
+            setupDone = true;
         }
-        //// TODO: 2016-02-27 dstHeight is always 0. fix this
-        return Bitmap.createScaledBitmap(src, dstWidth, dstHeight, false);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
+            // recycle the unneeded Bitmap
+            Bitmap toRecycle = ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap();
+            imagePreviewView.setImageResource(R.color.primary_dark);
+
+            toRecycle.recycle();
+        }
+
+        if (sortingContext != null)
+            sortingContext.recycle();
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updatePreview();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        filterDB.close();
-        if (src != null) {
-            src.recycle();
-        }
-        if (scaledSrc != null) {
-            scaledSrc.recycle();
-        }
-    }
-
-    @Override
-    public void onFilterSelection(boolean isSelected, Filter filter) {
+    public void onFilterSelected(boolean isSelected, Filter filter) {
         if (isSelected) {
-            this.currentFilter = filter;
+            this.activeFilter = filter;
         } else {
-            this.currentFilter = null;
+            this.activeFilter = null;
         }
 
-        onUpdatePreview();
+        updatePreview();
     }
 
-    private void onUpdatePreview() {
-        if (scaledSrc == null) {
-            Log.w(TAG, "Update Preview: No source image to draw.");
-            return;
+
+    private void updatePreview() {
+        if (previewLoaderTaskRef != null && previewLoaderTaskRef.get() != null) {
+            // A previously dispatched task is still running. Cancel it before creating a new one.
+            previewLoaderTaskRef.get().cancel(true);
         }
-        if (currentFilter == null) {
-            previewView.setImageBitmap(scaledSrc);
+
+        imagePreviewView.setColorFilter(COLOR_LOADING);
+
+        if (activeFilter == null) {
+            // no active filter: display the original image
+            previewLoaderTaskRef = new WeakReference<>(
+                    sortingContext.getOriginalImage(
+                            PREVIEW_SIZE,
+                            PREVIEW_SIZE,
+                            this)
+            );
         } else {
-            Bitmap sortedScaledSrc = scaledSrc.copy(Bitmap.Config.ARGB_8888, true);
-
-            final AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setMessage(MSG_SORTING)
-                    .setTitle(TITLE_SORTING)
-                    .setCancelable(false)
-                    .create();
-            alertDialog.show();
-
-            PixelSort.applyFilterAsync(sortedScaledSrc, currentFilter,
-                    new PixelSort.OnFilterAppliedListener() {
-                        @Override
-                        public void onFilterApplied(Bitmap bitmap) {
-                            Drawable previewDrawable = previewView.getDrawable();
-                            Bitmap oldBitmap = null;
-
-                            if (previewDrawable instanceof BitmapDrawable) {
-                                oldBitmap = ((BitmapDrawable) previewDrawable).getBitmap();
-                            }
-
-                            previewView.setImageBitmap(bitmap);
-                            alertDialog.dismiss();
-
-                            //Recycle old bitmap if unneeded
-                            if (oldBitmap != null && oldBitmap != scaledSrc) {
-                                oldBitmap.recycle();
-                            }
-                        }
-                    });
+            previewLoaderTaskRef = new WeakReference<>(
+                    sortingContext.getPixelSortedImage(
+                            activeFilter,
+                            PREVIEW_SIZE,
+                            PREVIEW_SIZE,
+                            this)
+            );
         }
     }
 
-    private void navigateToMainActivity() {
-        Intent upIntent = new Intent(SortActivity.this, MainActivity.class);
-        navigateUpTo(upIntent);
-    }
 
+    /**
+     * Navigates up to MainActivity.
+     *
+     * @param view
+     */
     public void back(View view) {
-        navigateToMainActivity();
+        NavUtils.navigateUpFromSameTask(this);
+        finish();
     }
 
+
+    /**
+     * Not implemented.
+     *
+     * @param view
+     */
     public void toggleFilterStack(View view) {
         Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
     }
 
+
+    /**
+     * Saves the image in sortingContext sorted with activeFilter.
+     *
+     * @param view
+     */
     public void saveSortedImage(View view) {
-        if (currentFilter == null) {
-            Toast.makeText(SortActivity.this, "Please select a filter. :)",
+        if (activeFilter == null) {
+            Toast.makeText(SortActivity.this, "Please select a filter.",
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Toast.makeText(this, "Applying filter.", Toast.LENGTH_LONG).show();
-        navigateToMainActivity();
+        Toast.makeText(this, "Applying filter and saving.", Toast.LENGTH_LONG).show();
+        sortingContext.savePixelSortedImage(getApplicationContext(), activeFilter, this);
 
-        //Apply filter & save
-        PixelSort.applyFilterAsync(src, currentFilter, new PixelSort.OnFilterAppliedListener() {
-            @Override
-            public void onFilterApplied(Bitmap bitmap) {
-                Toast.makeText(SortActivity.this, "Filter applied! Saving.",
-                        Toast.LENGTH_LONG).show();
-                OldMedia.saveImageAsync(SortActivity.this, src, new OldMedia.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved() {
-                        Toast.makeText(SortActivity.this, "Saved!",
-                                Toast.LENGTH_LONG).show();
-                    }
+        NavUtils.navigateUpFromSameTask(this);
+        finish();
+    }
 
-                    @Override
-                    public void onError() {
-                        Toast.makeText(SortActivity.this, "ERROR: Image failed to save.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+    @Override
+    public void onImageReady(boolean success, Bitmap bitmap) {
+        imagePreviewView.setColorFilter(COLOR_LOADED);
+
+        if (success) {
+            if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
+                // recycle the unneeded Bitmap
+                ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap().recycle();
             }
-        });
+
+            imagePreviewView.setImageBitmap(bitmap);
+        } else {
+            Toast.makeText(getApplicationContext(), "Error: preview could not be generated.",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onImageSaved(boolean success) {
+        if (success) {
+            Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Error: image could not be saved.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }
