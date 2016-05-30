@@ -33,8 +33,6 @@ public class SortActivity extends AppCompatActivity implements
         PixelSortingContext.OnImageReadyListener,
         PixelSortingContext.OnImageSavedListener {
 
-    //    private static final String MSG_SORTING = "Applying filter to image.";
-//    private static final String TITLE_SORTING = "Please Wait";
     private static final String TAG = SortActivity.class.getSimpleName();
 
 
@@ -152,6 +150,8 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     protected void onRestart() {
         super.onRestart();
+
+        // since the preview bitmap is recycled onStop(), we have to retrieve it onRestart()
         updatePreview();
     }
 
@@ -261,4 +261,5 @@ public class SortActivity extends AppCompatActivity implements
                     Toast.LENGTH_LONG).show();
         }
     }
+
 }
