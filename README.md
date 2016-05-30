@@ -1,4 +1,7 @@
 # pxSort
+(pronounced "pik-sort")
+
 An Android application for creating "pixel sorting" glitch art.
 
-Current version: 0.0.2
+[Check out the latest release!](https://github.com/g-whiz/pxSort/releases)
+Current version: v0.03-alpha
