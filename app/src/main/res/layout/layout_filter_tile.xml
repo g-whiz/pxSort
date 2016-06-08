@@ -21,6 +21,7 @@
             android:layout_gravity="center"
             android:id="@+id/thumb"
             android:src="@color/primary_dark"
+            android:background="@color/secondary_dark"
             android:layout_width="@dimen/filter_tile_image_height"
             android:layout_height="@dimen/filter_tile_image_height"
             android:scaleType="fitCenter"

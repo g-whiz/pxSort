@@ -5,14 +5,16 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import io.github.pxsort.R;
@@ -28,23 +30,25 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
     private static final String TAG = FilterAdapter.class.getSimpleName();
 
-    //array for keeping track of which filter(s) are selected
     private static final int NONE_SELECTED = -1;
     private int selectedPosition;
     private FilterTileViewHolder selectedHolder;
 
     private List<Filter> filters;
     private PixelSortingContext sortingContext;
-    private OnFilterSelectedListener listener;
+    private OnFilterSelectedListener selectionListener;
+
 
     public FilterAdapter(PixelSortingContext sortingContext, List<Filter> filters,
-                         OnFilterSelectedListener listener) {
+                         OnFilterSelectedListener selectionListener) {
         this.sortingContext = sortingContext;
         this.filters = filters;
-        this.listener = listener;
+        this.selectionListener = selectionListener;
         selectedPosition = NONE_SELECTED;
+
         selectedHolder = null;
     }
+
 
     @Override
     public FilterTileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,18 +58,16 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
     }
 
     @Override
-    public void onBindViewHolder(final FilterTileViewHolder holder, int position) {
+    public void onBindViewHolder(FilterTileViewHolder holder, int position) {
         // bind the Filter to the view
         Filter filter = filters.get(position);
         holder.title.setText(filter.name);
 
-        // If one or both of the thumbView's dimensions are 0 (e.g. before the view has been
-        // measured), then the resulting loaded image will be meaninglessly small
-        // (only 1 or 2 pixels). Thus, we skip the following code if that is the case
-        if (holder.thumbView.getWidth() != 0 && holder.thumbView.getHeight() != 0) {
-            holder.loaderTask = sortingContext.getPixelSortedImage(
-                    filter, holder.thumbView.getWidth(),
-                    holder.thumbView.getHeight(), holder);
+        if (holder.thumbView.getWidth() > 0 && holder.thumbView.getHeight() > 0) {
+            loadImg(holder, filter);
+        } else {
+            // thumbView hasn't been measured
+            loadImgOnMeasure(holder, filter);
         }
 
         if (position == selectedPosition) {
@@ -83,13 +85,14 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
     @Override
     public void onViewRecycled(FilterTileViewHolder holder) {
-        if (holder.position == selectedPosition) {
+        holder.itemView.setOnClickListener(null);
+
+        if (holder.getAdapterPosition() == selectedPosition) {
             selectedHolder = null;
         }
 
-        if (holder.loaderTask != null) {
-            holder.loaderTask.cancel(true);
-            holder.loaderTask = null;
+        if (holder.getThumbTask() != null) {
+            holder.getThumbTask().cancel(true);
         }
 
         if (holder.thumbView.getDrawable() instanceof BitmapDrawable) {
@@ -128,6 +131,43 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
     }
 
 
+    // Defers loading a Filter thumbnail until holder's views are guaranteed to be measured
+    private void loadImgOnMeasure(final FilterTileViewHolder holder, final Filter filter) {
+        holder.itemView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        loadImg(holder, filter);
+
+                        // views are now measured, no need to defer loading anymore
+                        holder.itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+        });
+    }
+
+
+    private void loadImg(FilterTileViewHolder holder, Filter filter) {
+        holder.setThumbTask(
+                sortingContext.getPixelSortedImage(
+                    filter, holder.thumbView.getWidth(),
+                    holder.thumbView.getHeight(), holder)
+        );
+    }
+
+
+    private void setSelected(FilterTileViewHolder holder, boolean isSelected) {
+        int COLOR_SELECTED = holder.itemView.getContext()
+                .getResources().getColor(R.color.secondary_dark);
+        int COLOR_DESELECTED = Color.TRANSPARENT;
+
+        if (isSelected) {
+            holder.itemView.setBackgroundColor(COLOR_SELECTED);
+        } else {
+            holder.itemView.setBackgroundColor(COLOR_DESELECTED);
+        }
+    }
+
+
     /**
      * View holder for a FilterAdapter's Views.
      */
@@ -137,16 +177,36 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
         public final View thumbnailBorder;
         public final TextView title;
 
-        public AsyncTask<Void, Void, Bitmap> loaderTask;
-        int position;
+        private WeakReference<PixelSortingContext.BitmapWorkerTask> thumbTaskRef;
 
         public FilterTileViewHolder(View itemView) {
             super(itemView);
             thumbView = (ImageView) itemView.findViewById(R.id.thumb);
             thumbnailBorder = itemView.findViewById(R.id.thumb_border);
             title = (TextView) itemView.findViewById(R.id.filter_title);
-            loaderTask = null;
+            thumbTaskRef = null;
         }
+
+
+        /**
+         * Sets this holder's BitmapWorkerTask
+         *
+         * @param thumbTask
+         */
+        public void setThumbTask(PixelSortingContext.BitmapWorkerTask thumbTask) {
+            this.thumbTaskRef = new WeakReference<>(thumbTask);
+        }
+
+
+        /**
+         * Gets this holder's BitmapWorkerTask, if it exists.
+         *
+         * @return This holder's BitmapWorkerTask, or null if the task has finished
+         */
+        public PixelSortingContext.BitmapWorkerTask getThumbTask() {
+            return thumbTaskRef != null ? thumbTaskRef.get() : null;
+        }
+
 
         @Override
         public void onClick(View v) {
@@ -155,24 +215,21 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
             if (getAdapterPosition() != selectedPosition) {
                 // this view has been selected. deselect the previously selected view
                 if (selectedHolder != null) {
-                    selectedHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                    setSelected(selectedHolder, false);
                 }
 
-                int selectedColor = itemView.getContext()
-                        .getResources().getColor(R.color.secondary_dark);
-                v.setBackgroundColor(selectedColor);
-
+                setSelected(this, true);
                 selectedHolder = this;
                 selectedPosition = getAdapterPosition();
 
-                listener.onFilterSelected(true, selectedFilter);
+                selectionListener.onFilterSelected(true, selectedFilter);
 
             } else {
                 // this view has been deselected
-                v.setBackgroundColor(Color.TRANSPARENT);
+                setSelected(this, false);
                 selectedHolder = null;
                 selectedPosition = NONE_SELECTED;
-                listener.onFilterSelected(false, selectedFilter);
+                selectionListener.onFilterSelected(false, selectedFilter);
             }
         }
 
@@ -185,7 +242,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
                 thumbView.setImageBitmap(thumbnail);
                 bitmap.recycle();
             }
-            loaderTask = null;
         }
     }
 
