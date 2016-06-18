@@ -9,11 +9,11 @@ import io.github.pxsort.sorting.filter.Filter;
  * <p/>
  * Created by George on 2016-05-05.
  */
-public abstract class Partition {
+public abstract class Partitioner {
 
     private Bitmap bitmap;
 
-    public Partition(Bitmap bitmap) {
+    public Partitioner(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
 
@@ -27,7 +27,7 @@ public abstract class Partition {
      * @return the pixels of the next partition
      * @throws ArrayIndexOutOfBoundsException if called when hasNext() == false
      */
-    public abstract int[] next();
+    public abstract int[] nextPartition();
 
     /**
      * Returns true if there are more partitions.
@@ -37,16 +37,16 @@ public abstract class Partition {
     public abstract boolean hasNext();
 
     /**
-     * Sets the pixels in the current partition to those in partition.
+     * Sets the pixels in the current partition to those in the given partition.
      *
      * @param partition the pixels to set the current partition as
      */
-    public abstract void set(int[] partition);
+    public abstract void setPartition(int[] partition);
 
-    public static Partition from(Bitmap bitmap, Filter filter) {
+    public static Partitioner from(Bitmap bitmap, Filter filter) {
         switch (filter.partitionType) {
             case Filter.GRID_PARTITION:
-                return new GridPartition(bitmap, filter.numRows, filter.numCols);
+                return new GridPartitioner(bitmap, filter.numRows, filter.numCols);
 
             default:
                 throw new IllegalArgumentException(

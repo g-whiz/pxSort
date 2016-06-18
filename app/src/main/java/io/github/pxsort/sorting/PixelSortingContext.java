@@ -92,7 +92,7 @@ public class PixelSortingContext {
                 if (mutableSrc != scaledMutSrc) {
                     mutableSrc.recycle();
                 }
-                PixelSorter.from(filter).applyTo(scaledMutSrc);
+                PixelSorter.fromFilter(filter).applyTo(scaledMutSrc);
 
                 return scaledMutSrc;
             }
@@ -177,7 +177,7 @@ public class PixelSortingContext {
                     return null;
                 }
 
-                PixelSorter.from(filter).applyTo(bitmap);
+                PixelSorter.fromFilter(filter).applyTo(bitmap);
                 MediaUtils.saveImage(context, bitmap);
 
                 bitmap.recycle();

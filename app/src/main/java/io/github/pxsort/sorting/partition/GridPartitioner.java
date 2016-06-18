@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  * <p/>
  * Created by George on 2016-05-05.
  */
-class GridPartition extends Partition {
+class GridPartitioner extends Partitioner {
 
     private final int rows;
     private final int columns;
@@ -30,7 +30,7 @@ class GridPartition extends Partition {
      * @param rows    The number of rows in the grid. Maximum 64.
      * @param columns The number of columns in the grid. Maximum 64.
      */
-    public GridPartition(Bitmap bitmap, int rows, int columns) {
+    public GridPartitioner(Bitmap bitmap, int rows, int columns) {
         super(bitmap);
         this.bitmapWidth = bitmap.getWidth();
         this.bitmapHeight = bitmap.getHeight();
@@ -48,12 +48,12 @@ class GridPartition extends Partition {
         }
 
         currRow = 0;
-        currColumn = -1; //to account for the initial +1 at the first call of next()
+        currColumn = -1; //to account for the initial +1 at the first call of nextPartition()
     }
 
 
     @Override
-    public int[] next() {
+    public int[] nextPartition() {
         if (!hasNext()) {
             throw new ArrayIndexOutOfBoundsException();
         }
@@ -97,7 +97,7 @@ class GridPartition extends Partition {
     }
 
     @Override
-    public void set(int[] partition) {
+    public void setPartition(int[] partition) {
         getBitmap().setPixels(partition, 0, width, x, y, width, height);
     }
 }

@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import io.github.pxsort.sorting.filter.Filter;
-import io.github.pxsort.sorting.partition.Partition;
+import io.github.pxsort.sorting.partition.Partitioner;
 
 /**
  * Abstract data type for pixel sorting Bitmaps.
@@ -48,12 +48,12 @@ public abstract class PixelSorter {
     }
 
     public void applyTo(Bitmap bitmap) {
-        Partition partition = Partition.from(bitmap, filter);
+        Partitioner partitioner = Partitioner.from(bitmap, filter);
 
-        while (partition.hasNext()) {
-            int[] unsortedPixels = partition.next();
+        while (partitioner.hasNext()) {
+            int[] unsortedPixels = partitioner.nextPartition();
             int[] sortedPixels = pixelSort(unsortedPixels);
-            partition.set(sortedPixels);
+            partitioner.setPartition(sortedPixels);
         }
     }
 
@@ -195,7 +195,7 @@ public abstract class PixelSorter {
      * @param filter the filter to create the PixelSorter from
      * @return the newly-created PixelSorter
      */
-    public static PixelSorter from(Filter filter) {
+    public static PixelSorter fromFilter(Filter filter) {
         switch (filter.algorithm) {
             case Filter.SORT:
                 return new SortPixelSorter(filter);
