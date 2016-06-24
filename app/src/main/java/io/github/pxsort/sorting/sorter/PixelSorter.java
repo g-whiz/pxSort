@@ -23,7 +23,7 @@ public abstract class PixelSorter {
 
     // Arrays used to store temporary values when executing the getComponent and combinePixel
     // helper methods. Since the methods are executed potentially millions of times per Bitmap,
-    // allocating new arrays on each invocation can cause performance issues.
+    // instantiating new arrays on each invocation might cause performance issues.
     private int[] components;
     private float[] hsv;
 

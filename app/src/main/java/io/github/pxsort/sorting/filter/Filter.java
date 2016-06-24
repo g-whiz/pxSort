@@ -63,6 +63,13 @@ public class Filter {
 
     public final int numCols;
 
+    public final int selectionType;
+
+    public final int threshComponent;
+
+    public final int threshVal;
+
+
     /**
      *
      * @param name        The name of this Filter.
@@ -296,4 +303,18 @@ public class Filter {
      * PARTITION CONSTANT: Partition the image into a grid.
      */
     public static final int GRID_PARTITION = 0;
+
+
+    /* ***** SELECTION CONSTANTS ***** */
+
+    /**
+     * SELECTION CONSTANT: Select all pixels in a partition for sorting.
+     */
+    public static final int SELECT_ALL = 0;
+
+    /**
+     * SELECTION CONSTANT: Select pixels .
+     */
+    public static final int SELECT_THRESHOLD = 1;
+
 }
