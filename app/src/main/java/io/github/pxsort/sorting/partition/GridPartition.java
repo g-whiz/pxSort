@@ -35,17 +35,9 @@ class GridPartition extends Partition {
         this.bitmapWidth = bitmap.getWidth();
         this.bitmapHeight = bitmap.getHeight();
 
-        if (bitmapHeight <= Math.min(64, rows)) {
-            this.rows = 1;
-        } else {
-            this.rows = Math.min(64, rows);
-        }
+        this.rows = Math.min(bitmapHeight, rows);
 
-        if (bitmapWidth <= Math.min(64, columns)) {
-            this.columns = 1;
-        } else {
-            this.columns = Math.min(64, columns);
-        }
+        this.columns = Math.min(bitmapWidth, columns);
 
         currRow = 0;
         currColumn = -1; //to account for the initial +1 at the first call of next()
