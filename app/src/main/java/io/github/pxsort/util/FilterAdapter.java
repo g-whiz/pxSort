@@ -194,7 +194,11 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
          * @param thumbTask
          */
         public void setThumbTask(PixelSortingContext.BitmapWorkerTask thumbTask) {
-            this.thumbTaskRef = new WeakReference<>(thumbTask);
+            if (thumbTaskRef != null && thumbTaskRef.get() != null) {
+                thumbTaskRef.get().cancel(true);
+            }
+
+            thumbTaskRef = new WeakReference<>(thumbTask);
         }
 
 

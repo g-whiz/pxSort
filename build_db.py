@@ -84,27 +84,333 @@ BST = 2
 
 GRID_PARTITION = 0
 
-
+# Flag indicating this filter is built-in
 BUILT_IN = 1
 
-ALGORITHMS = [SORT, HEAPIFY, BST]
-COMPONENTS = [CMPNT_BLUE, CMPNT_VAL]
-ORDERS = [DESCENDING]
-COMBO_TYPES = [COMBINE_ARGB]
-COMBO_FUNCS = [REPLACE, ADD]
-PARTITION_TYPES = [GRID_PARTITION]
-GRID_DIMS = [1, 3, 4]
+FILTERS = (
+    (
+        "Awesome X",
+        BUILT_IN,
 
-GRID_DIMS_NEW = [[1, 1], [4, 3]]
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
 
+        COMBINE_ARGB,
+        PRESERVE,
+        PRESERVE,
+        REPLACE,
+        PRESERVE,
 
-def name_filters(values):
-    name = "".join((str(val) for val in values))
-    return tuple([name] + list(values))
+        GRID_PARTITION,
+        1000000,
+        16
+    ),
 
+    (
+        "Simon",
+        BUILT_IN,
 
-def add_dims(values, new_dims):
-    return tuple(values + new_dims)
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        PRESERVE,
+        REPLACE,
+        PRESERVE,
+
+        GRID_PARTITION,
+        16,
+        1000000
+    ),
+
+    (
+        "Stan",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_VAL,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        48
+    ),
+
+    (
+        "Killface",
+        BUILT_IN,
+
+        HEAPIFY,
+        CMPNT_VAL,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        16,
+        12
+    ),
+
+    (
+        "Wendell",
+        BUILT_IN,
+
+        HEAPIFY,
+        CMPNT_VAL,
+        DESCENDING,
+
+        COMBINE_AHSV,
+        PRESERVE,
+        PRESERVE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        4,
+        3
+    ),
+
+    (
+        "Wendell X",
+        BUILT_IN,
+
+        HEAPIFY,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        PRESERVE,
+        REPLACE,
+        PRESERVE,
+
+        GRID_PARTITION,
+        4,
+        3
+    ),
+
+    (
+        "Hooper",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_VAL,
+        ASCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        PRESERVE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1,
+        1
+    ),
+
+    (
+        "Sinn",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_VAL,
+        ASCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        REPLACE,
+        REPLACE,
+        PRESERVE,
+
+        GRID_PARTITION,
+        1,
+        1
+    ),
+
+    (
+        "Cody",
+        BUILT_IN,
+
+        HEAPIFY,
+        CMPNT_RED,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        REPLACE,
+        SUBTRACT,
+        MULTIPLY,
+
+        GRID_PARTITION,
+        1,
+        1
+    ),
+
+    (
+        "Cody 2",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_HUE,
+        DESCENDING,
+
+        COMBINE_AHSV,
+        PRESERVE,
+        PRESERVE,
+        MULTIPLY,
+        SUBTRACT,
+
+        GRID_PARTITION,
+        1000000,
+        1
+    ),
+
+    (
+        "Nearl",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_GREEN,
+        ASCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1,
+        1000000
+    ),
+
+    (
+        "Master Cylinder",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_VAL,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        PRESERVE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        1
+    ),
+
+    (
+        "Antagone",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_HUE,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        REPLACE,
+        XOR,
+        PRESERVE,
+
+        GRID_PARTITION,
+        64,
+        48
+    ),
+
+    (
+        "Grace",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_HUE,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        XOR,
+        PRESERVE,
+        REPLACE,
+
+        GRID_PARTITION,
+        64,
+        48
+    ),
+
+    (
+        "Darcell",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_HUE,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        PRESERVE,
+        REPLACE,
+        PRESERVE,
+        XOR,
+
+        GRID_PARTITION,
+        64,
+        48
+    ),
+
+    (
+        "Dread Lobster",
+        BUILT_IN,
+
+        BST,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_AHSV,
+        PRESERVE,
+        PRESERVE,
+        MULTIPLY,
+        PRESERVE,
+
+        GRID_PARTITION,
+        32,
+        24
+    ),
+
+    (
+        "Xander",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        1
+    )
+)
 
 def main(argv):
 
@@ -118,28 +424,7 @@ def main(argv):
     # create table
     cursor.execute(DATABASE_CREATE)
 
-    base_filters = itertools.product(
-            [BUILT_IN],
-
-            ALGORITHMS,
-            COMPONENTS,
-            ORDERS,
-
-            COMBO_TYPES,
-            COMBO_FUNCS,
-            COMBO_FUNCS,
-            COMBO_FUNCS,
-            COMBO_FUNCS,
-
-            PARTITION_TYPES,
-    )
-
-    dimension_filters = list(map(lambda values: values + (1, 1), base_filters))
-    dimension_filters += list(map(lambda values: values + (4, 3), base_filters))
-
-    named_filters = map(name_filters, dimension_filters)
-
-    for filter in named_filters:
+    for filter in FILTERS:
         query = "INSERT INTO " + TABLE_FILTERS + " VALUES " + "{}".format(filter)
         cursor.execute(query)
 
