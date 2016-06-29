@@ -1,11 +1,30 @@
 # pxSort
-(pronounced "pik-sort")
 
-An Android application for creating "pixel sorting" glitch art.
+<!-- ![Pronounced: pik-sort.][logo]
+
+[logo]: http://i.imgur.com/PAGSnrx.png -->
+
+### *"Instant Art"*
+
+Current version: v0.04-alpha
 
 [Check out the latest release!](https://github.com/g-whiz/pxSort/releases)
 
-Current version: v0.04-alpha
+[pxSort Demo Gallery] (http://imgur.com/a/usPAJ)
+
+
+### What is pxSort?
+
+pxSort is a free, open-source Android application for creating *pixel sorting* glitch art.
+
+### What is Pixel Sorting
+
+Pixel sorting is a form of glitch art created by ordering the pixels in an image according to the
+value of some numerical value associated with each pixel (e.g. the red, green, or blue channel).
+
+In essence, the "glitchy" effects of pixel sorting are a result of the assignment of arbitrary order
+to otherwise orderless objects.
+
 
 [chem_org]: http://i.imgur.com/ccC1DYF.jpg
 [chem_srt1]: http://i.imgur.com/wlUTePU.jpg
