@@ -5,7 +5,7 @@ An Android application for creating "pixel sorting" glitch art.
 
 [Check out the latest release!](https://github.com/g-whiz/pxSort/releases)
 
-Current version: v0.03-alpha
+Current version: v0.04-alpha
 
 [chem_org]: http://i.imgur.com/ccC1DYF.jpg
 [chem_srt1]: http://i.imgur.com/wlUTePU.jpg
