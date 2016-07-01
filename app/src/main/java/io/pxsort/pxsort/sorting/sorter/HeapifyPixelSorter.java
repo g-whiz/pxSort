@@ -1,8 +1,8 @@
-package io.github.pxsort.sorting.sorter;
+package io.pxsort.pxsort.sorting.sorter;
 
 import java.util.Arrays;
 
-import io.github.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.filter.Filter;
 
 /**
  * A PixelSorter that organizes pixels in a binary heap.

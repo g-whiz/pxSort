@@ -1,4 +1,4 @@
-package io.github.pxsort.sorting;
+package io.pxsort.pxsort.sorting;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
-import io.github.pxsort.sorting.filter.Filter;
-import io.github.pxsort.sorting.sorter.PixelSorter;
-import io.github.pxsort.util.MediaUtils;
+import io.pxsort.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.sorter.PixelSorter;
+import io.pxsort.pxsort.util.MediaUtils;
 
 /**
  * Interface for asynchronously running pixel sorting operations on some image.

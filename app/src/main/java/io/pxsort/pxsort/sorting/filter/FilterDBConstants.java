@@ -1,4 +1,4 @@
-package io.github.pxsort.sorting.filter;
+package io.pxsort.pxsort.sorting.filter;
 
 /**
  * Package-private class for shared constants.

@@ -1,8 +1,8 @@
-package io.github.pxsort.sorting.partition;
+package io.pxsort.pxsort.sorting.partition;
 
 import android.graphics.Bitmap;
 
-import io.github.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.filter.Filter;
 
 /**
  * Abstract class for partitioning a Bitmap into sections to iterate over and pixel sort.

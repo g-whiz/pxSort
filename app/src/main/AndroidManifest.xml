@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.pxsort">
+    package="io.pxsort.pxsort">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.MainActivity"
+            android:name="io.pxsort.pxsort.activity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,14 +20,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SortActivity"
+            android:name="io.pxsort.pxsort.activity.SortActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".activity.MainActivity">
+            android:parentActivityName="io.pxsort.pxsort.activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
+                android:value="io.pxsort.pxsort.activity.MainActivity" />
         </activity>
-        <activity android:name=".activity.FilterManagerActivity"></activity>
+        <activity android:name="io.pxsort.pxsort.activity.FilterManagerActivity"></activity>
     </application>
 
 </manifest>

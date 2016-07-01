@@ -1,4 +1,4 @@
-package io.github.pxsort.activity;
+package io.pxsort.pxsort.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.github.pxsort.R;
-import io.github.pxsort.sorting.PixelSortingContext;
-import io.github.pxsort.sorting.filter.Filter;
-import io.github.pxsort.sorting.filter.FilterDB;
-import io.github.pxsort.util.FilterAdapter;
+import io.pxsort.pxsort.R;
+import io.pxsort.pxsort.sorting.PixelSortingContext;
+import io.pxsort.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.filter.FilterDB;
+import io.pxsort.pxsort.util.FilterAdapter;
 
 /**
  * Activity for pixel sorting.

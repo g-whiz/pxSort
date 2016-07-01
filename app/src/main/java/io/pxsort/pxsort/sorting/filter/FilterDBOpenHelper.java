@@ -1,4 +1,4 @@
-package io.github.pxsort.sorting.filter;
+package io.pxsort.pxsort.sorting.filter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -16,20 +16,20 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_ALGORITHM;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_1;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_2;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_3;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_4;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_TYPE;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_COMPONENT;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_IS_BUILT_IN;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_NAME;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_NUM_COLS;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_NUM_ROWS;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_ORDER;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_PARTITION_TYPE;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.TABLE_FILTERS;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_ALGORITHM;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_1;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_2;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_3;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_FUNC_4;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMBINE_TYPE;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_COMPONENT;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_IS_BUILT_IN;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_NAME;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_NUM_COLS;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_NUM_ROWS;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_ORDER;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_PARTITION_TYPE;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.TABLE_FILTERS;
 
 /**
  * Helper class for opening the Filter database.
