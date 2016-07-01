@@ -2,7 +2,6 @@
 #   A script to generate the filters.sqlite database.
 #
 
-import itertools
 import sqlite3
 import sys
 
@@ -47,13 +46,13 @@ DATABASE_DELETE_EXISTING = "DROP TABLE IF EXISTS " + TABLE_FILTERS
 
 # components
 
-CMPNT_RED = 0
-CMPNT_GREEN = 1
-CMPNT_BLUE = 2
-CMPNT_HUE = 3
-CMPNT_SAT = 4
-CMPNT_VAL = 5
-CMPNT_ALPHA = 6
+CMPNT_ALPHA = 0
+CMPNT_RED = 1
+CMPNT_GREEN = 2
+CMPNT_BLUE = 3
+CMPNT_HUE = 4
+CMPNT_SAT = 5
+CMPNT_VAL = 6
 
 # orders
 

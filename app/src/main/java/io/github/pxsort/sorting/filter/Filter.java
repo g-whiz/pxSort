@@ -178,39 +178,39 @@ public class Filter {
     /* ***** COMPONENT CONSTANTS ***** */
 
     /**
+     * COMPONENT CONSTANT: Sort pixels by their alpha component.
+     */
+    public static final int CMPNT_ALPHA = 0;
+
+    /**
      * COMPONENT CONSTANT: Sort pixels by their red colour component.
      */
-    public static final int CMPNT_RED = 0;
+    public static final int CMPNT_RED = 1;
 
     /**
      * COMPONENT CONSTANT: Sort pixels by their green colour component.
      */
-    public static final int CMPNT_GREEN = 1;
+    public static final int CMPNT_GREEN = 2;
 
     /**
      * COMPONENT CONSTANT: Sort pixels by their blue colour component.
      */
-    public static final int CMPNT_BLUE = 2;
+    public static final int CMPNT_BLUE = 3;
 
     /**
      * COMPONENT CONSTANT: Sort pixels by their hue component.
      */
-    public static final int CMPNT_HUE = 3;
+    public static final int CMPNT_HUE = 4;
 
     /**
      * COMPONENT CONSTANT: Sort pixels by their saturation component.
      */
-    public static final int CMPNT_SAT = 4;
+    public static final int CMPNT_SAT = 5;
 
     /**
      * COMPONENT CONSTANT: Sort pixels by their value component.
      */
-    public static final int CMPNT_VAL = 5;
-
-    /**
-     * COMPONENT CONSTANT: Sort pixels by their alpha component.
-     */
-    public static final int CMPNT_ALPHA = 6;
+    public static final int CMPNT_VAL = 6;
 
 
     /* ***** ORDER CONSTANTS ***** */
