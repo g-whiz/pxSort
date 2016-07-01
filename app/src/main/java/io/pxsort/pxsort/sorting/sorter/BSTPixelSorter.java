@@ -1,6 +1,6 @@
-package io.github.pxsort.sorting.sorter;
+package io.pxsort.pxsort.sorting.sorter;
 
-import io.github.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.filter.Filter;
 
 /**
  * A PixelSorter that organizes pixels into a top down traversal of a binary search tree.

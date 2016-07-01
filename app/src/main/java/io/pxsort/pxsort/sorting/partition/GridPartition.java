@@ -1,4 +1,4 @@
-package io.github.pxsort.sorting.partition;
+package io.pxsort.pxsort.sorting.partition;
 
 import android.graphics.Bitmap;
 

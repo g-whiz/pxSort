@@ -1,4 +1,4 @@
-package io.github.pxsort;
+package io.pxsort.pxsort;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

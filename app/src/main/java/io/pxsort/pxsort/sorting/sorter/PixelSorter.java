@@ -1,10 +1,10 @@
-package io.github.pxsort.sorting.sorter;
+package io.pxsort.pxsort.sorting.sorter;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import io.github.pxsort.sorting.filter.Filter;
-import io.github.pxsort.sorting.partition.Partition;
+import io.pxsort.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.sorting.partition.Partition;
 
 /**
  * Abstract data type for pixel sorting Bitmaps.

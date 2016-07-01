@@ -1,4 +1,4 @@
-package io.github.pxsort.util;
+package io.pxsort.pxsort.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import io.github.pxsort.R;
+import io.pxsort.pxsort.R;
 
 /** A class containing static methods for IO operations.
  *

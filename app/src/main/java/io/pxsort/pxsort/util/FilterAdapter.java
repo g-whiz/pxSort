@@ -1,4 +1,4 @@
-package io.github.pxsort.util;
+package io.pxsort.pxsort.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,9 @@ import android.widget.TextView;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.github.pxsort.R;
-import io.github.pxsort.sorting.PixelSortingContext;
-import io.github.pxsort.sorting.filter.Filter;
+import io.pxsort.pxsort.R;
+import io.pxsort.pxsort.sorting.PixelSortingContext;
+import io.pxsort.pxsort.sorting.filter.Filter;
 
 /**
  * Adapter subclass for SortActivity UI

@@ -1,4 +1,4 @@
-package io.github.pxsort.sorting.filter;
+package io.pxsort.pxsort.sorting.filter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.pxsort.sorting.filter.FilterDBConstants.COL_NAME;
-import static io.github.pxsort.sorting.filter.FilterDBConstants.TABLE_FILTERS;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.COL_NAME;
+import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.TABLE_FILTERS;
 
 /**
  * Interface to the database used to keep track of user and default Filters.

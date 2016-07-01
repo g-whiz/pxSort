@@ -1,9 +1,9 @@
-package io.github.pxsort.activity;
+package io.pxsort.pxsort.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import io.github.pxsort.R;
+import io.pxsort.pxsort.R;
 
 public class FilterManagerActivity extends AppCompatActivity {
 

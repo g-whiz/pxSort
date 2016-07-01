@@ -1,4 +1,4 @@
-package io.github.pxsort.activity;
+package io.pxsort.pxsort.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import io.github.pxsort.R;
-import io.github.pxsort.util.MediaUtils;
+import io.pxsort.pxsort.R;
+import io.pxsort.pxsort.util.MediaUtils;
 
 /**
  * Activity for the main menu.
