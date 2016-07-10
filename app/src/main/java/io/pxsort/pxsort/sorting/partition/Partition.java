@@ -11,14 +11,14 @@ import io.pxsort.pxsort.sorting.filter.Filter;
  */
 public abstract class Partition {
 
-    private Bitmap bitmap;
+    protected final Bitmap src;
 
-    public Partition(Bitmap bitmap) {
-        this.bitmap = bitmap;
+    public Partition(Bitmap src) {
+        this.src = src;
     }
 
-    protected Bitmap getBitmap() {
-        return bitmap;
+    protected Bitmap getSrcBitmap() {
+        return src;
     }
 
     /**
@@ -27,7 +27,7 @@ public abstract class Partition {
      * @return the pixels of the next partition
      * @throws ArrayIndexOutOfBoundsException if called when hasNext() == false
      */
-    public abstract int[] next();
+    public abstract Bitmap next();
 
     /**
      * Returns true if there are more partitions.
@@ -41,9 +41,9 @@ public abstract class Partition {
      *
      * @param partition the pixels to set the current partition as
      */
-    public abstract void set(int[] partition);
+    public abstract void set(Bitmap partition);
 
-    public static Partition from(Bitmap bitmap, Filter filter) {
+    public static Partition create(Bitmap bitmap, Filter filter) {
         switch (filter.partitionType) {
             case Filter.GRID_PARTITION:
                 return new GridPartition(bitmap, filter.numRows, filter.numCols);

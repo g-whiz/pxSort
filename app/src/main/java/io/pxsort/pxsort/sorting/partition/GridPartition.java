@@ -15,81 +15,119 @@ class GridPartition extends Partition {
     private final int bitmapWidth;
     private final int bitmapHeight;
 
-    private int currRow;
-    private int currColumn;
+    private Bitmap partBitmap;
+    private final int[] pixelBuf;
 
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    private int currPartRow;
+    private int currPartColumn;
+
+    private int partX;
+    private int partY;
+    private int partWidth;
+    private int partHeight;
 
     /**
      * Sole constructor.
      *
-     * @param bitmap  The bitmap to partition.
+     * @param src  The bitmap to partition.
      * @param rows    The number of rows in the grid. Maximum 64.
      * @param columns The number of columns in the grid. Maximum 64.
      */
-    public GridPartition(Bitmap bitmap, int rows, int columns) {
-        super(bitmap);
-        this.bitmapWidth = bitmap.getWidth();
-        this.bitmapHeight = bitmap.getHeight();
+    public GridPartition(Bitmap src, int rows, int columns) {
+        super(src);
+        this.bitmapWidth = src.getWidth();
+        this.bitmapHeight = src.getHeight();
 
         this.rows = Math.min(bitmapHeight, rows);
 
         this.columns = Math.min(bitmapWidth, columns);
 
-        currRow = 0;
-        currColumn = -1; //to account for the initial +1 at the first call of next()
+        this.partBitmap = createPartBitmap();
+        // at this point, partBitmap has the dimensions of the maximum-sized partition
+        pixelBuf = new int[partBitmap.getHeight() * partBitmap.getWidth()];
+
+        this.currPartRow = 0;
+        this.currPartColumn = -1; //to account for the initial +1 at the first call of next()
     }
 
 
     @Override
-    public int[] next() {
+    public Bitmap next() {
         if (!hasNext()) {
-            throw new ArrayIndexOutOfBoundsException();
+            throw new ArrayIndexOutOfBoundsException(
+                    "next() called on GridPartition with no next partition.");
+        }
+
+        if (partBitmap.isRecycled()) {
+            partBitmap = createPartBitmap();
         }
 
         // update the coordinate of the current partition in the partition grid
-        currColumn++;
-        if (currColumn == columns) {
-            currColumn = 0;
-            currRow++;
+        currPartColumn++;
+        if (currPartColumn == columns) {
+            currPartColumn = 0;
+            currPartRow++;
         }
 
-        updatePartitionDimensions();
-        int[] partition = new int[width * height];
-        getBitmap().getPixels(partition, 0, width, x, y, width, height);
+        updateToNextPartition();
+        src.getPixels(pixelBuf, 0, partWidth, partX, partY, partWidth, partHeight);
+        partBitmap.setPixels(pixelBuf, 0, partWidth, 0, 0, partWidth, partHeight);
 
-        return partition;
+        return partBitmap;
     }
 
+
+    private Bitmap createPartBitmap() {
+        int maxPartHeight = bitmapHeight / rows + (bitmapHeight % rows > 0 ? 1 : 0);
+        int maxPartWidth = bitmapWidth / columns + (bitmapWidth % columns > 0 ? 1 : 0);
+
+        return Bitmap.createBitmap(maxPartWidth, maxPartHeight, Bitmap.Config.ARGB_8888);
+    }
+
+
     /**
-     * Updates x, y, width, and calculateBSTHeight to reflect the dimensions of the current partition.
+     * Updates partX, partY, partWidth, and partHeight to reflect the
+     * dimensions of the current partition.
      */
-    private void updatePartitionDimensions() {
-        x = currColumn * (bitmapWidth / columns) +
-                (currColumn < bitmapWidth % columns ? currColumn : bitmapWidth % columns);
+    private void updateToNextPartition() {
+        partX = currPartColumn * (bitmapWidth / columns) +
+                (currPartColumn < bitmapWidth % columns ? currPartColumn : bitmapWidth % columns);
 
-        y = currRow * (bitmapHeight / rows) +
-                (currRow < bitmapHeight % rows ? currRow : bitmapHeight % rows);
+        partY = currPartRow * (bitmapHeight / rows) +
+                (currPartRow < bitmapHeight % rows ? currPartRow : bitmapHeight % rows);
 
-        width = bitmapWidth / columns
-                + (currColumn < bitmapWidth % columns ? 1 : 0);
+        partWidth = bitmapWidth / columns
+                + (currPartColumn < bitmapWidth % columns ? 1 : 0);
 
-        height = bitmapHeight / rows +
-                (currRow < bitmapHeight % rows ? 1 : 0);
+        partHeight = bitmapHeight / rows +
+                (currPartRow < bitmapHeight % rows ? 1 : 0);
+
+        if (partBitmap.getWidth() != partWidth
+                || partBitmap.getHeight() != partHeight) {
+            partBitmap.reconfigure(partWidth, partHeight, Bitmap.Config.ARGB_8888);
+        }
     }
 
     @Override
     public boolean hasNext() {
-        return currRow < (rows - 1)
-                || (currRow == (rows - 1)
-                && (currColumn + 1) < columns);
+        boolean hasNext = currPartRow < (rows - 1)
+                || (currPartRow == (rows - 1)
+                && (currPartColumn + 1) < columns);
+
+        if (!hasNext && !partBitmap.isRecycled()) {
+            partBitmap.recycle();
+        }
+
+        return hasNext;
     }
 
     @Override
-    public void set(int[] partition) {
-        getBitmap().setPixels(partition, 0, width, x, y, width, height);
+    public void set(Bitmap partition) {
+        if (partition.isRecycled()) {
+            throw new IllegalArgumentException(
+                    "Cannot set the current partition with a recycled bitmap.");
+        }
+        partition.getPixels(pixelBuf, 0, partWidth, 0, 0, partWidth, partHeight);
+        src.setPixels(pixelBuf, 0, partWidth, partX, partY, partWidth, partHeight);
     }
 }
