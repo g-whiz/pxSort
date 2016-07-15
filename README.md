@@ -17,7 +17,7 @@ Current version: v0.04-alpha
 
 pxSort is a free, open-source Android application for creating *pixel sorting* glitch art.
 
-### What is Pixel Sorting
+### What is Pixel Sorting?
 
 Pixel sorting is a form of glitch art created by ordering the pixels in an image according to the
 value of some numerical value associated with each pixel (e.g. the red, green, or blue channel).
