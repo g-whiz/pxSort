@@ -1,5 +1,6 @@
 package io.pxsort.pxsort.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -41,30 +42,29 @@ public class SortActivity extends AppCompatActivity implements
     private static final int COLOR_LOADED = 0x00000000;
 
     private ImageView imagePreviewView;
+    private boolean isPreviewInitialized;
+
+    private ProgressDialog loadingSpinner;
 
     // TODO: this should be a setting
     private static final int PREVIEW_SIZE = 500;
 
     private Filter activeFilter;
-
     private PixelSortingContext sortingContext;
 
     // Reference used to cancel any running, unneeded task.
     private WeakReference<PixelSortingContext.BitmapWorkerTask> previewLoaderTaskRef;
 
-    // true once onWindowFocusChanged has been called once
-    private boolean setupDone;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupDone = false;
 
         activeFilter = null;
         previewLoaderTaskRef = null;
 
         setContentView(R.layout.activity_sort);
         imagePreviewView = (ImageView) findViewById(R.id.sort_image_preview_view);
+        isPreviewInitialized = false;
 
         List<Filter> filters = null;
         try {
@@ -117,15 +117,10 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus && !setupDone) {
-            // redraw thumbnails now that they are measured
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
-            recyclerView.getAdapter().notifyDataSetChanged();
-
+        if (hasFocus && !isPreviewInitialized) {
+            // do the initial load of the source image once views have been measured
             updatePreview();
-
-            setupDone = true;
+            isPreviewInitialized = true;
         }
     }
 
@@ -141,6 +136,7 @@ public class SortActivity extends AppCompatActivity implements
 
             toRecycle.recycle();
         }
+        isPreviewInitialized = false;
 
         if (sortingContext != null)
             sortingContext.recycle();
@@ -150,9 +146,9 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     protected void onRestart() {
         super.onRestart();
-
-        // since the preview bitmap is recycled onStop(), we have to retrieve it onRestart()
-        updatePreview();
+//
+//        // since the preview bitmap is recycled onStop(), we have to retrieve it onRestart()
+//        updatePreview();
     }
 
     @Override
@@ -174,6 +170,7 @@ public class SortActivity extends AppCompatActivity implements
         }
 
         imagePreviewView.setColorFilter(COLOR_LOADING);
+        showLoadingSpinner(true);
 
         if (activeFilter == null) {
             // no active filter: display the original image
@@ -191,6 +188,30 @@ public class SortActivity extends AppCompatActivity implements
                             PREVIEW_SIZE,
                             this)
             );
+        }
+    }
+
+
+    private void showLoadingSpinner(boolean show) {
+        if (show) {
+            String message;
+            if (activeFilter != null) {
+                message = "Loading preview of " + activeFilter.name;
+            } else {
+                message = "Loading original";
+            }
+
+            loadingSpinner = new ProgressDialog(this);
+            loadingSpinner.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            loadingSpinner.setIndeterminate(true);
+            loadingSpinner.setCancelable(false);
+            loadingSpinner.setMessage(message);
+            loadingSpinner.show();
+        } else {
+            if (loadingSpinner != null) {
+                loadingSpinner.dismiss();
+                loadingSpinner = null;
+            }
         }
     }
 
@@ -238,6 +259,7 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     public void onImageReady(boolean success, Bitmap bitmap) {
         imagePreviewView.setColorFilter(COLOR_LOADED);
+        showLoadingSpinner(false);
 
         if (success) {
             if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
