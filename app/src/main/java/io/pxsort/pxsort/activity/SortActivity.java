@@ -141,15 +141,7 @@ public class SortActivity extends AppCompatActivity implements
         if (sortingContext != null)
             sortingContext.recycle();
     }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-//
-//        // since the preview bitmap is recycled onStop(), we have to retrieve it onRestart()
-//        updatePreview();
-    }
+    
 
     @Override
     public void onFilterSelected(boolean isSelected, Filter filter) {
