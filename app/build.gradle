@@ -9,7 +9,7 @@ android {
         applicationId 'io.pxsort'
         minSdkVersion 16
         versionCode 1
-        versionName "0.04-alpha"
+        versionName "v0.05-alpha"
     }
     buildTypes {
         release {
