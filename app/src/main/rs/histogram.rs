@@ -14,7 +14,10 @@ uint32_t component_const;
 /* The (dynamically allocated) histogram. */
 int32_t *histogram;
 
+
 void __attribute__((kernel)) populate_histogram(uchar4 in) {
-    // Atomically increment the count of
-    rsAtomicAdd(&(histogram[get_component(&in, component_const)]), 1);
+
+    uchar idx = get_component(in, component_const);
+    // Atomically increment the count of pixels with
+    rsAtomicAdd(&(histogram[idx]), 1);
 }

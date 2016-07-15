@@ -1,10 +1,11 @@
 package io.pxsort.pxsort.sorting.sorter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import io.pxsort.pxsort.sorting.filter.Filter;
-import io.pxsort.pxsort.sorting.partition.Partition;
+import io.pxsort.pxsort.sorting.partition.Partitioner;
 
 /**
  * Abstract data type for pixel sorting Bitmaps.
@@ -16,10 +17,16 @@ import io.pxsort.pxsort.sorting.partition.Partition;
 public abstract class PixelSorter {
 
     private static final String TAG = PixelSorter.class.getSimpleName();
+
     /**
      * This PixelSorter's Filter
      */
     protected final Filter filter;
+
+    /**
+     * The application Context
+     */
+    protected final Context appContext;
 
     // Arrays used to store temporary values when executing the getComponent and combinePixel
     // helper methods. Since the methods are executed potentially millions of times per Bitmap,
@@ -32,8 +39,16 @@ public abstract class PixelSorter {
 
     private int[] combineFuncs;
 
-    protected PixelSorter(Filter filter) {
+    /**
+     * Sole constructor.
+     *
+     * @param filter  The Filter that defines how this PixelSorter will pixel sort
+     * @param context
+     */
+    protected PixelSorter(Filter filter, Context context) {
         this.filter = filter;
+
+        this.appContext = context.getApplicationContext();
         this.components = new int[4];
         this.oldComponents = new int[4];
         this.newComponents = new int[4];
@@ -48,12 +63,12 @@ public abstract class PixelSorter {
     }
 
     public void applyTo(Bitmap bitmap) {
-        Partition partition = Partition.from(bitmap, filter);
+        Partitioner partitioner = Partitioner.create(bitmap, filter);
 
-        while (partition.hasNext()) {
-            int[] unsortedPixels = partition.next();
-            int[] sortedPixels = pixelSort(unsortedPixels);
-            partition.set(sortedPixels);
+        while (partitioner.hasNext()) {
+            Bitmap partition = partitioner.next();
+            pixelSort(partition);
+            partitioner.set(partition);
         }
     }
 
@@ -61,10 +76,10 @@ public abstract class PixelSorter {
     /**
      * Apply this PixelSorter's pixel sorting algorithm to pixels.
      *
-     * @param pixels
+     * @param partition
      * @return
      */
-    protected abstract int[] pixelSort(int[] pixels);
+    protected abstract void pixelSort(Bitmap partition);
 
 
     /**
@@ -195,16 +210,16 @@ public abstract class PixelSorter {
      * @param filter the filter to create the PixelSorter from
      * @return the newly-created PixelSorter
      */
-    public static PixelSorter from(Filter filter) {
+    public static PixelSorter create(Filter filter, Context context) {
         switch (filter.algorithm) {
             case Filter.SORT:
-                return new SortPixelSorter(filter);
+                return new SortPixelSorter(filter, context);
 
             case Filter.HEAPIFY:
-                return new HeapifyPixelSorter(filter);
+                return new HeapifyPixelSorter(filter, context);
 
             case Filter.BST:
-                return new BSTPixelSorter(filter);
+                return new BSTPixelSorter(filter, context);
 
             default:
                 throw new IllegalArgumentException(

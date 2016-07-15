@@ -1,5 +1,9 @@
 package io.pxsort.pxsort.sorting.sorter;
 
+
+import android.content.Context;
+import android.graphics.Bitmap;
+
 import io.pxsort.pxsort.sorting.filter.Filter;
 
 /**
@@ -11,34 +15,41 @@ class BSTPixelSorter extends SortPixelSorter {
 
     private static final String TAG = BSTPixelSorter.class.getSimpleName();
 
-    BSTPixelSorter(Filter filter) {
-        super(filter);
+    BSTPixelSorter(Filter filter, Context context) {
+        super(filter, context);
     }
 
 
     @Override
-    protected int[] pixelSort(int[] oldPixels) {
-        int[] sortedPixels = super.pixelSort(oldPixels);
-        return topDownTraversal(sortedPixels);
+    protected void pixelSort(Bitmap partition) {
+        super.pixelSort(partition);
+
+        int[] oldPixels = new int[partition.getWidth() * partition.getHeight()];
+        partition.getPixels(oldPixels, 0, partition.getWidth(),
+                0, 0, partition.getWidth(), partition.getHeight());
+
+        int[] newPixels = topDownTraversal(oldPixels);
+        partition.setPixels(newPixels, 0, partition.getWidth(),
+                0, 0, partition.getWidth(), partition.getHeight());
     }
 
 
-    private int[] topDownTraversal(int[] sortedPixels) {
-        int[] traversal = new int[sortedPixels.length];
+    private int[] topDownTraversal(int[] oldPixels) {
+        int[] newPixels = new int[oldPixels.length];
 
-        int height = calculateBSTHeight(sortedPixels.length);
+        int height = calculateBSTHeight(oldPixels.length);
 
         int idx = 0;
         for (int h = height; h >= 0; h--)
-            for (int c = 1; c * (1 << h) - 1 < sortedPixels.length; c += 2) {
+            for (int c = 1; c * (1 << h) - 1 < oldPixels.length; c += 2) {
 
-                int oldPx = sortedPixels[idx];
-                int newPx = sortedPixels[c * (1 << h) - 1];
-                traversal[idx] = combinePixels(oldPx, newPx);
+                int oldPx = oldPixels[idx];
+                int newPx = oldPixels[c * (1 << h) - 1];
+                newPixels[idx] = combinePixels(oldPx, newPx);
                 idx++;
             }
 
-        return traversal;
+        return newPixels;
     }
 
 

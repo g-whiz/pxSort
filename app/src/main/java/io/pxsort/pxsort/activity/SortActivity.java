@@ -52,13 +52,9 @@ public class SortActivity extends AppCompatActivity implements
     // Reference used to cancel any running, unneeded task.
     private WeakReference<PixelSortingContext.BitmapWorkerTask> previewLoaderTaskRef;
 
-    // true once onWindowFocusChanged has been called once
-    private boolean setupDone;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupDone = false;
 
         activeFilter = null;
         previewLoaderTaskRef = null;
@@ -117,15 +113,8 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus && !setupDone) {
-            // redraw thumbnails now that they are measured
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
-            recyclerView.getAdapter().notifyDataSetChanged();
-
+        if (hasFocus) {
             updatePreview();
-
-            setupDone = true;
         }
     }
 
@@ -246,9 +235,6 @@ public class SortActivity extends AppCompatActivity implements
             }
 
             imagePreviewView.setImageBitmap(bitmap);
-        } else {
-            Toast.makeText(getApplicationContext(), "Error: preview could not be generated.",
-                    Toast.LENGTH_LONG).show();
         }
     }
 

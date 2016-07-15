@@ -9,11 +9,11 @@ import io.pxsort.pxsort.sorting.filter.Filter;
  * <p/>
  * Created by George on 2016-05-05.
  */
-public abstract class Partition {
+public abstract class Partitioner {
 
     protected final Bitmap src;
 
-    public Partition(Bitmap src) {
+    public Partitioner(Bitmap src) {
         this.src = src;
     }
 
@@ -43,10 +43,10 @@ public abstract class Partition {
      */
     public abstract void set(Bitmap partition);
 
-    public static Partition create(Bitmap bitmap, Filter filter) {
+    public static Partitioner create(Bitmap bitmap, Filter filter) {
         switch (filter.partitionType) {
             case Filter.GRID_PARTITION:
-                return new GridPartition(bitmap, filter.numRows, filter.numCols);
+                return new GridPartitioner(bitmap, filter.numRows, filter.numCols);
 
             default:
                 throw new IllegalArgumentException(

@@ -30,7 +30,7 @@ public class PixelSortingContext {
      */
     private static final int NO_REQ = Integer.MAX_VALUE;
 
-    private static final Executor EXECUTOR = AsyncTask.THREAD_POOL_EXECUTOR;
+    private static final Executor EXECUTOR = AsyncTask.SERIAL_EXECUTOR;
 
     private static final String TAG = PixelSortingContext.class.getSimpleName();
 
@@ -41,6 +41,8 @@ public class PixelSortingContext {
 
     private final int imageWidth;
     private final int imageHeight;
+
+    private final Context appContext;
 
     /**
      * @param context
@@ -55,6 +57,8 @@ public class PixelSortingContext {
         BitmapFactory.Options opts = MediaUtils.decodeBounds(contentResolver, imageUri);
         imageWidth = opts.outWidth;
         imageHeight = opts.outHeight;
+
+        this.appContext = context.getApplicationContext();
     }
 
 
@@ -92,7 +96,7 @@ public class PixelSortingContext {
                 if (mutableSrc != scaledMutSrc) {
                     mutableSrc.recycle();
                 }
-                PixelSorter.from(filter).applyTo(scaledMutSrc);
+                PixelSorter.create(filter, appContext).applyTo(scaledMutSrc);
 
                 return scaledMutSrc;
             }
@@ -177,8 +181,8 @@ public class PixelSortingContext {
                     return null;
                 }
 
-                PixelSorter.from(filter).applyTo(bitmap);
-                MediaUtils.saveImage(context, bitmap);
+                PixelSorter.create(filter, appContext).applyTo(bitmap);
+                MediaUtils.saveImage(appContext, bitmap);
 
                 bitmap.recycle();
                 return null;

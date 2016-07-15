@@ -1,5 +1,8 @@
 package io.pxsort.pxsort.sorting.sorter;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
 import java.util.Arrays;
 
 import io.pxsort.pxsort.sorting.filter.Filter;
@@ -11,12 +14,17 @@ import io.pxsort.pxsort.sorting.filter.Filter;
  */
 class HeapifyPixelSorter extends PixelSorter {
 
-    HeapifyPixelSorter(Filter filter) {
-        super(filter);
+    HeapifyPixelSorter(Filter filter, Context context) {
+        super(filter, context);
     }
 
     @Override
-    protected int[] pixelSort(int[] oldPixels) {
+    protected void pixelSort(Bitmap partition) {
+
+        int[] oldPixels = new int[partition.getWidth() * partition.getHeight()];
+        partition.getPixels(oldPixels, 0, partition.getWidth(),
+                0, 0, partition.getWidth(), partition.getHeight());
+
         int[] newPixels = Arrays.copyOf(oldPixels, oldPixels.length);
         newPixels = buildHeap(newPixels, filter.component, filter.order);
 
@@ -24,7 +32,8 @@ class HeapifyPixelSorter extends PixelSorter {
             newPixels[i] = combinePixels(oldPixels[i], newPixels[i]);
         }
 
-        return newPixels;
+        partition.setPixels(newPixels, 0, partition.getWidth(),
+                0, 0, partition.getWidth(), partition.getHeight());
     }
 
     private int[] buildHeap(int[] heap, int component, int order) {
