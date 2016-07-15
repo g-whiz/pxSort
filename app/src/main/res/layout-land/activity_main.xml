@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.MainActivity">
+
+    <FrameLayout
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_logo"
+            android:padding="50dp"
+            android:src="@drawable/pxsort_logo" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/load"
+                android:gravity="center"
+                android:textColor="@color/cyan"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="pickImage" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filters"
+                android:gravity="center"
+                android:textColor="@color/magenta"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="openFilterManager" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/snap"
+                android:gravity="center"
+                android:textColor="@color/yellow"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:onClick="takePicture" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:baselineAligned="false"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/button_load"
+                android:contentDescription="@string/desc_load"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="160%"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_load_96dp"
+                style="@style/CyanButton"
+                android:onClick="pickImage" />
+        </android.support.percent.PercentRelativeLayout>
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/button_filters"
+                android:contentDescription="@string/desc_filters"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="160%"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_filters_96dp"
+                style="@style/MagentaButton"
+                android:onClick="openFilterManager" />
+
+        </android.support.percent.PercentRelativeLayout>
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/button_snap"
+                android:contentDescription="@string/desc_snap"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="160%"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_snap_96dp"
+                style="@style/YellowButton"
+                android:onClick="takePicture" />
+
+        </android.support.percent.PercentRelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
