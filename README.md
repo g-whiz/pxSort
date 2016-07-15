@@ -6,7 +6,7 @@
 
 ### *"Instant Art"*
 
-Current version: v0.04-alpha
+Current version: v0.05-alpha
 
 [Check out the latest release!](https://github.com/g-whiz/pxSort/releases)
 
