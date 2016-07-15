@@ -29,7 +29,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
     private static final String TAG = FilterAdapter.class.getSimpleName();
 
-    private static final int NONE_SELECTED = -1;
+    public static final int NONE_SELECTED = -1;
     private int selectedPosition;
     private FilterTileViewHolder selectedHolder;
 
@@ -38,14 +38,21 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
     private OnFilterSelectedListener selectionListener;
 
 
+
     public FilterAdapter(PixelSortingContext sortingContext, List<Filter> filters,
-                         OnFilterSelectedListener selectionListener) {
+                         OnFilterSelectedListener selectionListener, int selectedPosition) {
         this.sortingContext = sortingContext;
         this.filters = filters;
         this.selectionListener = selectionListener;
-        selectedPosition = NONE_SELECTED;
+        this.selectedPosition = selectedPosition;
 
         selectedHolder = null;
+    }
+
+
+    public FilterAdapter(PixelSortingContext sortingContext, List<Filter> filters,
+                         OnFilterSelectedListener selectionListener) {
+        this(sortingContext, filters, selectionListener, NONE_SELECTED);
     }
 
 
@@ -69,11 +76,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
             loadImgOnMeasure(holder, filter);
         }
 
-        if (position == selectedPosition) {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-        } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-        }
+        setSelected(holder, position == selectedPosition);
 
         // color the border of the thumbView
         int borderColor = getBorderColor(holder.itemView.getContext(), position);
@@ -112,6 +115,15 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
         return filters.size();
     }
 
+
+    /**
+     * Returns the position of the currently selected item, or NONE_SELECTED if no item is selected.
+     *
+     * @return position of the currently selected item, or NONE_SELECTED if no item is selected
+     */
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
 
     private int getBorderColor(Context c, int position) {
         switch (position % 3) {
@@ -238,13 +250,11 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterTile
 
 
         @Override
-        public void onImageReady(boolean success, Bitmap bitmap) {
-            if (success) {
-                Bitmap thumbnail = ThumbnailUtils.extractThumbnail(
-                        bitmap, thumbView.getWidth(), thumbView.getHeight());
-                thumbView.setImageBitmap(thumbnail);
-                bitmap.recycle();
-            }
+        public void onImageReady(Bitmap bitmap) {
+            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(
+                    bitmap, thumbView.getWidth(), thumbView.getHeight());
+            thumbView.setImageBitmap(thumbnail);
+            bitmap.recycle();
         }
     }
 

@@ -1,6 +1,7 @@
 package io.pxsort.pxsort.activity;
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -35,11 +36,7 @@ public class SortActivity extends AppCompatActivity implements
         PixelSortingContext.OnImageSavedListener {
 
     private static final String TAG = SortActivity.class.getSimpleName();
-
-
-    // TODO: These should be in resources
-    private static final int COLOR_LOADING = 0x40000000;
-    private static final int COLOR_LOADED = 0x00000000;
+    private static final String FILTER_IDX = "filter_index";
 
     private ImageView imagePreviewView;
     private boolean isPreviewInitialized;
@@ -74,13 +71,33 @@ public class SortActivity extends AppCompatActivity implements
         } catch (IOException e) {
             NavUtils.navigateUpFromSameTask(this);
             finish();
+            return;
         }
 
-        FilterAdapter adapter = new FilterAdapter(sortingContext, filters, this);
+        FilterAdapter adapter;
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(FILTER_IDX)) {
+
+            int filterIdx = savedInstanceState.getInt(FILTER_IDX);
+            if (filterIdx >= 0)
+                activeFilter = filters.get(filterIdx);
+            adapter = new FilterAdapter(sortingContext, filters,
+                    this, filterIdx);
+        } else {
+            adapter = new FilterAdapter(sortingContext, filters, this);
+        }
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
-        recyclerView.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        assert recyclerView != null;
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(
+                    new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        } else {
+            recyclerView.setLayoutManager(
+                    new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }
+
         recyclerView.setAdapter(adapter);
     }
 
@@ -140,8 +157,21 @@ public class SortActivity extends AppCompatActivity implements
 
         if (sortingContext != null)
             sortingContext.recycle();
+
+        if (previewLoaderTaskRef.get() != null)
+            previewLoaderTaskRef.get().cancel(true);
     }
-    
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
+        assert recyclerView != null;
+
+        FilterAdapter adapter = (FilterAdapter) recyclerView.getAdapter();
+        outState.putInt(FILTER_IDX, adapter.getSelectedPosition());
+    }
 
     @Override
     public void onFilterSelected(boolean isSelected, Filter filter) {
@@ -161,7 +191,6 @@ public class SortActivity extends AppCompatActivity implements
             previewLoaderTaskRef.get().cancel(true);
         }
 
-        imagePreviewView.setColorFilter(COLOR_LOADING);
         showLoadingSpinner(true);
 
         if (activeFilter == null) {
@@ -185,7 +214,13 @@ public class SortActivity extends AppCompatActivity implements
 
 
     private void showLoadingSpinner(boolean show) {
+        if (loadingSpinner != null) {
+            loadingSpinner.dismiss();
+            loadingSpinner = null;
+        }
+
         if (show) {
+
             String message;
             if (activeFilter != null) {
                 message = "Loading preview of " + activeFilter.name;
@@ -199,11 +234,6 @@ public class SortActivity extends AppCompatActivity implements
             loadingSpinner.setCancelable(false);
             loadingSpinner.setMessage(message);
             loadingSpinner.show();
-        } else {
-            if (loadingSpinner != null) {
-                loadingSpinner.dismiss();
-                loadingSpinner = null;
-            }
         }
     }
 
@@ -216,16 +246,6 @@ public class SortActivity extends AppCompatActivity implements
     public void back(View view) {
         NavUtils.navigateUpFromSameTask(this);
         finish();
-    }
-
-
-    /**
-     * Not implemented.
-     *
-     * @param view
-     */
-    public void toggleFilterStack(View view) {
-        Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -249,21 +269,14 @@ public class SortActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onImageReady(boolean success, Bitmap bitmap) {
-        imagePreviewView.setColorFilter(COLOR_LOADED);
-        showLoadingSpinner(false);
-
-        if (success) {
-            if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
-                // recycle the unneeded Bitmap
-                ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap().recycle();
-            }
-
-            imagePreviewView.setImageBitmap(bitmap);
-        } else {
-            Toast.makeText(getApplicationContext(), "Error: preview could not be generated.",
-                    Toast.LENGTH_LONG).show();
+    public void onImageReady(Bitmap bitmap) {
+        if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
+            // recycle the unneeded Bitmap
+            ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap().recycle();
         }
+
+        imagePreviewView.setImageBitmap(bitmap);
+        showLoadingSpinner(false);
     }
 
     @Override

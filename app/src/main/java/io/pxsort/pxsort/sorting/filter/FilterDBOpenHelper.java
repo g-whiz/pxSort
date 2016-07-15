@@ -101,8 +101,9 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
         List<Filter> defaultFilters = new ArrayList<>();
 
         //get all rows of the table, sorted by name
-        Cursor defaultsCursor = getDefaultsDB(context)
-                .query(TABLE_FILTERS, null, null, null, null, null, COL_NAME);
+        SQLiteDatabase defaultsDB = getDefaultsDB(context);
+        Cursor defaultsCursor = defaultsDB.query(
+                TABLE_FILTERS, null, null, null, null, null, COL_NAME);
         defaultsCursor.moveToFirst();
 
         //copy each row into filtersDB
@@ -114,6 +115,7 @@ public class FilterDBOpenHelper extends SQLiteOpenHelper {
         }
 
         defaultsCursor.close();
+        defaultsDB.close();
         return defaultFilters;
     }
 

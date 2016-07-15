@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activity.SortActivity"
     android:background="@color/primary_dark">
 
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:layout_gravity="top">
 
         <ImageButton
 
             android:contentDescription="@string/desc_back"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:src="@drawable/ic_arrow_back_24dp"
             android:layout_weight="1"
             android:onClick="back"
@@ -25,8 +24,8 @@
 
         <ImageButton
             android:contentDescription="@string/desc_save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:src="@drawable/ic_save_24dp"
             android:layout_weight="1"
             android:onClick="saveSortedImage"
@@ -37,16 +36,17 @@
     <ImageView
         android:contentDescription="@string/sort_preview_description"
         android:id="@+id/sort_image_preview_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:src="@color/primary_dark" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/filter_tile_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="horizontal"
-        android:orientation="horizontal" />
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:orientation="vertical" />
+
 
 </LinearLayout>

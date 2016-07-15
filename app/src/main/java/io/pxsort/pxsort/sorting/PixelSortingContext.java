@@ -68,7 +68,6 @@ public class PixelSortingContext {
      * @param listener  the listener to return the bitmap through
      * @return An AsyncTask that can be used to cancel the operation if the bitmap is no
      * longer needed.
-     * @throws FileNotFoundException
      */
     public BitmapWorkerTask getPixelSortedImage(
             final Filter filter, final int reqWidth, final int reqHeight,
@@ -77,6 +76,9 @@ public class PixelSortingContext {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
+                if (isCancelled()) {
+                    return null;
+                }
 
                 Bitmap mutableSrc = null;
                 try {
@@ -87,33 +89,48 @@ public class PixelSortingContext {
                     return null;
                 }
 
+                if (isCancelled()) {
+                    mutableSrc.recycle();
+                    return null;
+                }
+
                 // Scale down the bitmap as much as possible to maximize sort performance.
                 Bitmap scaledMutSrc = scaleDownBitmap(mutableSrc, reqWidth, reqHeight);
                 if (mutableSrc != scaledMutSrc) {
                     mutableSrc.recycle();
                 }
+
+                if (isCancelled()) {
+                    scaledMutSrc.recycle();
+                    return null;
+                }
+
                 PixelSorter.from(filter).applyTo(scaledMutSrc);
 
                 return scaledMutSrc;
             }
 
+
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(true, bitmap);
+                if (isCancelled()) {
+                    bitmap.recycle();
+                } else {
+                    listener.onImageReady(bitmap);
+                }
             }
+
 
             @Override
             protected void onCancelled(Bitmap bitmap) {
                 if (bitmap != null)
                     bitmap.recycle();
-
-                listener.onImageReady(false, null);
             }
         }.executeOnExecutor(EXECUTOR);
     }
 
 
-    public AsyncTask<Void, Void, Bitmap> getPixelSortedImage(
+    public BitmapWorkerTask getPixelSortedImage(
             final Filter filter, final OnImageReadyListener listener) {
         return getPixelSortedImage(filter, NO_REQ, NO_REQ, listener);
     }
@@ -125,6 +142,10 @@ public class PixelSortingContext {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
+                if (isCancelled()) {
+                    return null;
+                }
+
                 Bitmap bitmap = null;
                 try {
                     bitmap = retrieveOriginalImage(reqWidth, reqHeight, true);
@@ -139,7 +160,11 @@ public class PixelSortingContext {
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                listener.onImageReady(true, bitmap);
+                if (isCancelled()) {
+                    bitmap.recycle();
+                } else {
+                    listener.onImageReady(bitmap);
+                }
             }
 
             @Override
@@ -147,14 +172,12 @@ public class PixelSortingContext {
                 if (bitmap != null) {
                     bitmap.recycle();
                 }
-
-                listener.onImageReady(false, null);
             }
         }.executeOnExecutor(EXECUTOR);
     }
 
 
-    public AsyncTask<Void, Void, Bitmap> getOriginalImage(final OnImageReadyListener listener) {
+    public BitmapWorkerTask getOriginalImage(final OnImageReadyListener listener) {
         return getOriginalImage(NO_REQ, NO_REQ, listener);
     }
 
@@ -288,10 +311,9 @@ public class PixelSortingContext {
         /**
          * Called once the requested image is ready.
          *
-         * @param success true if loading the image was successful, false otherwise
          * @param bitmap the Bitmap containing the image, undefined if success == false
          */
-        void onImageReady(boolean success, Bitmap bitmap);
+        void onImageReady(Bitmap bitmap);
     }
 
 
