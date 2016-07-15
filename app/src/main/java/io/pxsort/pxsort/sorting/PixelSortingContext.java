@@ -43,8 +43,10 @@ public class PixelSortingContext {
     private final int imageHeight;
 
     /**
-     * @param context
-     * @param imageUri
+     * Sole constructor.
+     *
+     * @param context the Context underlying this PixelSortingContext
+     * @param imageUri the Uri of the image file to pixel sort
      * @throws FileNotFoundException if the Uri provided points to a nonexistent file
      */
     public PixelSortingContext(Context context, Uri imageUri) throws IOException {
@@ -80,7 +82,7 @@ public class PixelSortingContext {
                     return null;
                 }
 
-                Bitmap mutableSrc = null;
+                Bitmap mutableSrc;
                 try {
                     mutableSrc = retrieveOriginalImage(reqWidth, reqHeight, true);
                 } catch (IOException e) {
@@ -146,7 +148,7 @@ public class PixelSortingContext {
                     return null;
                 }
 
-                Bitmap bitmap = null;
+                Bitmap bitmap;
                 try {
                     bitmap = retrieveOriginalImage(reqWidth, reqHeight, true);
                 } catch (IOException e) {

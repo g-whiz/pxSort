@@ -63,7 +63,7 @@ public class SortActivity extends AppCompatActivity implements
         imagePreviewView = (ImageView) findViewById(R.id.sort_image_preview_view);
         isPreviewInitialized = false;
 
-        List<Filter> filters = null;
+        List<Filter> filters;
         try {
             initSortingContext();
 
@@ -238,22 +238,14 @@ public class SortActivity extends AppCompatActivity implements
     }
 
 
-    /**
-     * Navigates up to MainActivity.
-     *
-     * @param view
-     */
+    /* onClick method */
     public void back(View view) {
         NavUtils.navigateUpFromSameTask(this);
         finish();
     }
 
 
-    /**
-     * Saves the image in sortingContext sorted with activeFilter.
-     *
-     * @param view
-     */
+    /* onClick method */
     public void saveSortedImage(View view) {
         if (activeFilter == null) {
             Toast.makeText(SortActivity.this, "Please select a filter.",

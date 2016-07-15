@@ -2,7 +2,6 @@
 #   A script to generate the filters.sqlite database.
 #
 
-import itertools
 import sqlite3
 import sys
 

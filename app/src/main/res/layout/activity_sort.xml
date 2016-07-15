@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activity.SortActivity"
-    android:background="@color/primary_dark">
+    tools:context=".activity.SortActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
