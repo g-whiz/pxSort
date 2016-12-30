@@ -7,7 +7,14 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import io.pxsort.pxsort.R;
 import io.pxsort.pxsort.util.MediaUtils;
@@ -21,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String IMAGE_URI = "file_uri";
+
+    private static final String DEFAULT_IMG_NAME = "default.jpg";
+    private static final String DEFAULT_IMG_ASSET = "img/" + DEFAULT_IMG_NAME;
 
     private static final int PICK_IMAGE = 1;
     private static final int TAKE_PICTURE = 2;
@@ -47,7 +57,40 @@ public class MainActivity extends AppCompatActivity {
     
     
     public void openFilterManager(View view) {
-        Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+        Intent filterMgrIntent = new Intent(this, FilterManagerActivity.class);
+
+        Uri imgUri = getDefaultImgUri();
+        filterMgrIntent.putExtra(IMAGE_URI, imgUri);
+
+        startActivity(filterMgrIntent);
+    }
+
+
+    private Uri getDefaultImgUri() {
+        File defaultImg = new File(getCacheDir(), DEFAULT_IMG_NAME);
+
+        if (!defaultImg.exists()) {
+            try {
+                if (!defaultImg.createNewFile()) {
+                    throw new IOException();
+                }
+
+                InputStream defaultImgIS = getAssets().open(DEFAULT_IMG_ASSET);
+                OutputStream defaultImgOS = new FileOutputStream(defaultImg);
+
+                IOUtils.copy(defaultImgIS, defaultImgOS);
+
+                defaultImgIS.close();
+                defaultImgOS.close();
+
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to retrieve default image.", e);
+                finish();
+                return null;
+            }
+        }
+
+        return Uri.fromFile(defaultImg);
     }
 
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/card"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/CardView.Dark.pxSort">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                app:layout_widthPercent="100%"
+                app:layout_aspectRatio="100%"
+                android:src="@color/primary"
+                android:contentDescription="@string/sort_preview_description" />
+
+        </android.support.percent.PercentRelativeLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:text="@string/dummy_text_filter_tile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="16sp"
+            style="@style/CardView.Dark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/edit"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_black_24dp"
+                style="@style/CyanButton" />
+
+            <ImageButton
+                android:id="@+id/clone"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_clone_black_24dp"
+                style="@style/MagentaButton" />
+
+            <ImageButton
+                android:id="@+id/delete"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete_black_24dp"
+                style="@style/YellowButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <!--
+        todo
+        - square imageview (use percent layout)
+        - name
+        - edit, clone, and delete buttons (share button (encode with uri & base64 string) too?)
+    -->
+
+</android.support.v7.widget.CardView>

@@ -4,10 +4,8 @@ import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,39 +13,36 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 import io.pxsort.pxsort.R;
 import io.pxsort.pxsort.sorting.PixelSortingContext;
 import io.pxsort.pxsort.sorting.filter.Filter;
-import io.pxsort.pxsort.sorting.filter.FilterDB;
-import io.pxsort.pxsort.util.FilterAdapter;
+import io.pxsort.pxsort.util.FilterPickerAdapter;
 
 /**
  * Activity for pixel sorting.
  *
  * Created by George on 2016-02-16.
  */
-public class SortActivity extends AppCompatActivity implements
-        FilterAdapter.OnFilterSelectedListener,
+public class SortActivity extends AbstractSortActivity implements
+        FilterPickerAdapter.OnFilterSelectedListener,
         PixelSortingContext.OnImageReadyListener,
         PixelSortingContext.OnImageSavedListener {
 
     private static final String TAG = SortActivity.class.getSimpleName();
     private static final String FILTER_IDX = "filter_index";
 
-    private ImageView imagePreviewView;
+    private ImageView filterPreviewView;
     private boolean isPreviewInitialized;
 
     private ProgressDialog loadingSpinner;
 
-    // TODO: this should be a setting
+    // TODO: this should be a setting, not a hardcoded constant
     private static final int PREVIEW_SIZE = 500;
 
     private Filter activeFilter;
-    private PixelSortingContext sortingContext;
 
     // Reference used to cancel any running, unneeded task.
     private WeakReference<PixelSortingContext.BitmapWorkerTask> previewLoaderTaskRef;
@@ -55,79 +50,45 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        activeFilter = null;
-        previewLoaderTaskRef = null;
-
         setContentView(R.layout.activity_sort);
-        imagePreviewView = (ImageView) findViewById(R.id.sort_image_preview_view);
+
+        filterPreviewView = (ImageView) findViewById(R.id.filter_preview);
         isPreviewInitialized = false;
 
-        List<Filter> filters;
-        try {
-            initSortingContext();
+        initFilterPicker(savedInstanceState);
+    }
 
-            filters = getFiltersFromDB();
-        } catch (IOException e) {
-            NavUtils.navigateUpFromSameTask(this);
-            finish();
-            return;
-        }
 
-        FilterAdapter adapter;
+    private void initFilterPicker(Bundle savedInstanceState) {
+        List<Filter> filters = getFilterDB().getFilters();
+        FilterPickerAdapter adapter;
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(FILTER_IDX)) {
 
             int filterIdx = savedInstanceState.getInt(FILTER_IDX);
             if (filterIdx >= 0)
                 activeFilter = filters.get(filterIdx);
-            adapter = new FilterAdapter(sortingContext, filters,
-                    this, filterIdx);
+            adapter = new FilterPickerAdapter(getSortingContext(), filters, this, filterIdx);
         } else {
-            adapter = new FilterAdapter(sortingContext, filters, this);
+            adapter = new FilterPickerAdapter(getSortingContext(), filters, this);
         }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
-        assert recyclerView != null;
+        RecyclerView filterPickerView = (RecyclerView) findViewById(R.id.filter_picker_view);
+        if (filterPickerView == null) {
+            Log.e(TAG, "Unable to initialize UI: R.id.filter_picker_view not found.");
+            finish();
+            return;
+        }
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            recyclerView.setLayoutManager(
+            filterPickerView.setLayoutManager(
                     new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         } else {
-            recyclerView.setLayoutManager(
+            filterPickerView.setLayoutManager(
                     new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }
 
-        recyclerView.setAdapter(adapter);
-    }
-
-
-    private void initSortingContext() throws IOException {
-        Uri imageUri = getIntent().getParcelableExtra(MainActivity.IMAGE_URI);
-        try {
-            sortingContext = new PixelSortingContext(this, imageUri);
-        } catch (IOException e) {
-            Log.e(TAG, "Error: a problem occurred while initializing the " +
-                    "PixelSortingContext for this Activity", e);
-            throw e;
-        }
-    }
-
-
-    private List<Filter> getFiltersFromDB() throws IOException {
-        FilterDB filterDB;
-        try {
-            filterDB = new FilterDB(this);
-        } catch (IOException e) {
-            Log.e(TAG, "A fatal error occurred while accessing the Filter database.", e);
-            throw e;
-        }
-
-        filterDB.open();
-        List<Filter> filters = filterDB.getFilters();
-        filterDB.close();
-
-        return filters;
+        filterPickerView.setAdapter(adapter);
     }
 
 
@@ -146,17 +107,14 @@ public class SortActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
 
-        if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
+        if (filterPreviewView.getDrawable() instanceof BitmapDrawable) {
             // recycle the unneeded Bitmap
-            Bitmap toRecycle = ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap();
-            imagePreviewView.setImageResource(R.color.primary_dark);
+            Bitmap toRecycle = ((BitmapDrawable) filterPreviewView.getDrawable()).getBitmap();
+            filterPreviewView.setImageResource(R.color.primary_dark);
 
             toRecycle.recycle();
         }
         isPreviewInitialized = false;
-
-        if (sortingContext != null)
-            sortingContext.recycle();
 
         if (previewLoaderTaskRef.get() != null)
             previewLoaderTaskRef.get().cancel(true);
@@ -166,10 +124,10 @@ public class SortActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_tile_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.filter_picker_view);
         assert recyclerView != null;
 
-        FilterAdapter adapter = (FilterAdapter) recyclerView.getAdapter();
+        FilterPickerAdapter adapter = (FilterPickerAdapter) recyclerView.getAdapter();
         outState.putInt(FILTER_IDX, adapter.getSelectedPosition());
     }
 
@@ -196,14 +154,14 @@ public class SortActivity extends AppCompatActivity implements
         if (activeFilter == null) {
             // no active filter: display the original image
             previewLoaderTaskRef = new WeakReference<>(
-                    sortingContext.getOriginalImage(
+                    getSortingContext().getOriginalImage(
                             PREVIEW_SIZE,
                             PREVIEW_SIZE,
                             this)
             );
         } else {
             previewLoaderTaskRef = new WeakReference<>(
-                    sortingContext.getPixelSortedImage(
+                    getSortingContext().getPixelSortedImage(
                             activeFilter,
                             PREVIEW_SIZE,
                             PREVIEW_SIZE,
@@ -248,13 +206,13 @@ public class SortActivity extends AppCompatActivity implements
     /* onClick method */
     public void saveSortedImage(View view) {
         if (activeFilter == null) {
-            Toast.makeText(SortActivity.this, "Please select a filter.",
+            Toast.makeText(this, "Please select a filter.",
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
         Toast.makeText(this, "Applying filter and saving.", Toast.LENGTH_LONG).show();
-        sortingContext.savePixelSortedImage(getApplicationContext(), activeFilter, this);
+        getSortingContext().savePixelSortedImage(getApplicationContext(), activeFilter, this);
 
         NavUtils.navigateUpFromSameTask(this);
         finish();
@@ -262,12 +220,12 @@ public class SortActivity extends AppCompatActivity implements
 
     @Override
     public void onImageReady(Bitmap bitmap) {
-        if (imagePreviewView.getDrawable() instanceof BitmapDrawable) {
+        if (filterPreviewView.getDrawable() instanceof BitmapDrawable) {
             // recycle the unneeded Bitmap
-            ((BitmapDrawable) imagePreviewView.getDrawable()).getBitmap().recycle();
+            ((BitmapDrawable) filterPreviewView.getDrawable()).getBitmap().recycle();
         }
 
-        imagePreviewView.setImageBitmap(bitmap);
+        filterPreviewView.setImageBitmap(bitmap);
         showLoadingSpinner(false);
     }
 

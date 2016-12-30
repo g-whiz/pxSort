@@ -408,6 +408,63 @@ FILTERS = (
         GRID_PARTITION,
         1000000,
         1
+    ),
+
+    (
+        "Mutable1",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        1
+    ),
+
+    (
+        "Mutable2",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        1
+    ),
+
+    (
+        "Mutable3",
+        BUILT_IN,
+
+        SORT,
+        CMPNT_SAT,
+        DESCENDING,
+
+        COMBINE_ARGB,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+        REPLACE,
+
+        GRID_PARTITION,
+        1000000,
+        1
     )
 )
 

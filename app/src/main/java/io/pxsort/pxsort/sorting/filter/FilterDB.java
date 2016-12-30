@@ -19,7 +19,7 @@ import static io.pxsort.pxsort.sorting.filter.FilterDBConstants.TABLE_FILTERS;
  */
 public class FilterDB {
 
-    private SQLiteDatabase filterDB;
+    private SQLiteDatabase filterSQLiteDB;
     private FilterDBOpenHelper filterDBOpenHelper;
 
     public FilterDB(Context context) throws IOException {
@@ -33,7 +33,7 @@ public class FilterDB {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        filterDB = filterDBOpenHelper.getWritableDatabase();
+        filterSQLiteDB = filterDBOpenHelper.getWritableDatabase();
     }
 
 
@@ -42,7 +42,7 @@ public class FilterDB {
      */
     public void close() {
         filterDBOpenHelper.close();
-        filterDB.close();
+        filterSQLiteDB.close();
     }
 
 
@@ -50,12 +50,16 @@ public class FilterDB {
      * Adds filter to the Filter database.
      *
      * @param filter the Filter to add
-     * @return the updated list of Filters in this FilterDB
+     * @return true if filter was successfully added to the database.
+     * false if a name conflict was detected.
      */
-    public List<Filter> addFilter(Filter filter) {
-        filterDB.insert(TABLE_FILTERS, null, filter.toContentValues());
+    public boolean addFilter(Filter filter) {
+        if (getFilters().contains(filter)) {
+            return false;
+        }
 
-        return getFilters();
+        filterSQLiteDB.insert(TABLE_FILTERS, null, filter.toContentValues());
+        return true;
     }
 
 
@@ -63,12 +67,14 @@ public class FilterDB {
      * Deletes filter from the Filter database.
      *
      * @param filter the Filter to delete
-     * @return the updated list of Filters in this FilterDB
+     * @return true if a row corresponding to filter was deleted. false otherwise
      */
-    public List<Filter> deleteFilter(Filter filter) {
-        filterDB.delete(TABLE_FILTERS, "WHERE " + COL_NAME + "=?", new String[]{filter.name});
+    public boolean deleteFilter(Filter filter) {
+        int rowsDeleted =
+                filterSQLiteDB.delete(TABLE_FILTERS, COL_NAME + "=?", new String[]{filter.name});
 
-        return getFilters();
+        // since Filter names are PRIMARY KEYs in the DB, rowsDeleted should be 1 at most
+        return rowsDeleted > 0;
     }
 
     /**
@@ -79,7 +85,7 @@ public class FilterDB {
     public List<Filter> getFilters() {
         List<Filter> filtersList = new ArrayList<>();
 
-        Cursor filtersCursor = filterDB.query(TABLE_FILTERS, null, null, null,
+        Cursor filtersCursor = filterSQLiteDB.query(TABLE_FILTERS, null, null, null,
                 null, null, COL_NAME);
         filtersCursor.moveToFirst();
 

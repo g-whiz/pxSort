@@ -27,7 +27,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.pxsort.pxsort.activity.MainActivity" />
         </activity>
-        <activity android:name="io.pxsort.pxsort.activity.FilterManagerActivity"></activity>
+        <activity
+            android:name="io.pxsort.pxsort.activity.FilterManagerActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="io.pxsort.pxsort.activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.pxsort.pxsort.activity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

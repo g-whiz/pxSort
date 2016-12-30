@@ -172,8 +172,16 @@ public class Filter {
         return name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // Filter names must be unique.
+        // Filter.equals() is used as part of Collection.contains() to determine if there
+        // is a name conflict when adding a new Filter.
+        return obj instanceof Filter && ((Filter) obj).name.equals(this.name);
+    }
 
-/* ************** CONSTANTS ************** */
+
+    /* ************** CONSTANTS ************** */
 
     /* ***** COMPONENT CONSTANTS ***** */
 

@@ -19,7 +19,7 @@
 
         <ImageView
             android:layout_gravity="center"
-            android:id="@+id/thumb"
+            android:id="@+id/thumbnail"
             android:src="@color/primary_dark"
             android:background="@color/secondary_dark"
             android:layout_width="@dimen/filter_tile_image_height"
@@ -31,7 +31,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/filter_title"
+        android:id="@+id/title"
         android:layout_width="90dp"
         android:layout_height="30dp"
         android:layout_margin="3dp"
